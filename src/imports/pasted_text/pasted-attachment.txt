@@ -1,0 +1,648 @@
+# PROJECT: NEXUS LIBRARY — AI-Powered Personal Knowledge Operating System
+
+## Vision
+
+Build a premium, visually stunning, cross-platform React Native application that transforms a user's collection of books, PDFs, notes, articles, research papers, and learning resources into an interactive digital knowledge ecosystem.
+
+This is NOT a PDF reader.
+
+This is a Personal Knowledge Operating System.
+
+The application should feel like a combination of:
+
+* Netflix
+* Notion
+* Obsidian
+* Kindle
+* Goodreads
+* A luxury private library
+* An AI-powered second brain
+
+The experience should make users feel like they are walking through their own digital library and knowledge empire.
+
+The primary goal is to help users:
+
+* Organize books
+* Read efficiently
+* Retain information
+* Connect ideas
+* Build knowledge
+* Track learning progress
+* Discover relationships between concepts
+* Interact with their entire library using AI
+
+The application must be fully optimized for:
+
+* Android
+* iOS
+* Tablets
+* Desktop support (future expansion)
+
+The design should feel modern, premium, futuristic, intelligent, and highly interactive.
+
+---
+
+# DESIGN SYSTEM
+
+## Visual Theme
+
+Create a luxurious knowledge-focused interface.
+
+Color palette:
+
+Primary:
+#0A0F1F
+
+Secondary:
+#101828
+
+Accent:
+#2D8CFF
+
+Highlight:
+#5AA9FF
+
+Success:
+#22C55E
+
+Warning:
+#F59E0B
+
+Danger:
+#EF4444
+
+Text:
+#FFFFFF
+
+Subtext:
+#A1A1AA
+
+Background:
+#050816
+
+Card Background:
+#111827
+
+---
+
+# USER EXPERIENCE
+
+The application should feel alive.
+
+Use:
+
+* Smooth transitions
+* Parallax scrolling
+* Floating animations
+* Dynamic lighting effects
+* Glassmorphism
+* Soft shadows
+* Motion design
+* Fluid page transitions
+
+Every screen should feel polished and premium.
+
+---
+
+# APPLICATION STRUCTURE
+
+## Authentication
+
+Support:
+
+* Email Login
+* Google Login
+* Apple Login
+* Guest Mode
+
+Features:
+
+* Secure authentication
+* JWT-based sessions
+* User profile system
+
+---
+
+# ONBOARDING EXPERIENCE
+
+First launch:
+
+Animated introduction.
+
+Ask user:
+
+What topics interest you?
+
+Examples:
+
+* Artificial Intelligence
+* Programming
+* Psychology
+* Philosophy
+* Finance
+* Business
+* Strategy
+* History
+* Science
+
+Generate initial shelves automatically.
+
+---
+
+# HOME SCREEN
+
+The home screen is the user's digital library.
+
+Large hero section.
+
+Welcome message.
+
+Example:
+
+Good Evening, Chris.
+
+Knowledge grows every day.
+
+You currently have:
+
+* 247 Books
+* 23 In Progress
+* 52 Completed
+* 3 Reading Streak Days
+
+---
+
+# DIGITAL BOOKSHELF SYSTEM
+
+The centerpiece of the app.
+
+Books are displayed on beautiful virtual shelves.
+
+Examples:
+
+AI Shelf
+
+Programming Shelf
+
+Psychology Shelf
+
+Business Shelf
+
+Strategy Shelf
+
+Chemistry Shelf
+
+Custom Shelves
+
+Each shelf displays:
+
+* Book cover
+* Reading progress
+* Completion status
+* Notes count
+* Highlight count
+
+Users can:
+
+* Rearrange shelves
+* Rename shelves
+* Create shelves
+* Delete shelves
+* Drag and drop books
+
+---
+
+# BOOK MANAGEMENT
+
+Users can import:
+
+* PDF
+* EPUB
+* MOBI
+* DOCX
+* TXT
+
+Import methods:
+
+* File picker
+* Cloud upload
+* Google Drive
+* Dropbox
+* Local storage
+
+Automatically extract:
+
+* Title
+* Author
+* Cover
+* Metadata
+
+Generate covers when missing.
+
+---
+
+# BOOK DETAILS PAGE
+
+When a user clicks a book:
+
+Display:
+
+Book cover
+
+Title
+
+Author
+
+Category
+
+Tags
+
+Reading Progress
+
+Time Spent Reading
+
+Highlights
+
+Notes
+
+Bookmarks
+
+Reading History
+
+AI Insights
+
+Buttons:
+
+Read
+
+Continue Reading
+
+Ask AI
+
+View Notes
+
+Generate Summary
+
+Generate Flashcards
+
+Generate Quiz
+
+---
+
+# READING EXPERIENCE
+
+Build a world-class reader.
+
+Features:
+
+* Dark mode
+* Light mode
+* Sepia mode
+* Adjustable font size
+* Adjustable line spacing
+* Page animations
+* Vertical scrolling
+* Horizontal paging
+
+Support:
+
+* Highlighting
+* Bookmarks
+* Notes
+* Comments
+* Tags
+
+---
+
+# SMART HIGHLIGHTING SYSTEM
+
+Users can highlight text.
+
+Colors:
+
+* Yellow
+* Blue
+* Green
+* Red
+* Purple
+
+Each highlight can have:
+
+* Notes
+* Tags
+* Importance rating
+
+---
+
+# AI KNOWLEDGE ASSISTANT
+
+The most important feature.
+
+Every uploaded book becomes searchable.
+
+User can ask:
+
+Summarize this chapter.
+
+What are the key concepts?
+
+Explain this in simpler terms.
+
+Create flashcards.
+
+Create exam questions.
+
+What books discuss this concept?
+
+Compare this book with another.
+
+Generate a study guide.
+
+Generate a reading roadmap.
+
+Find contradictions across books.
+
+Generate a mind map.
+
+---
+
+# KNOWLEDGE GRAPH
+
+Create a visual knowledge network.
+
+Nodes:
+
+* Books
+* Concepts
+* Topics
+* Notes
+* Authors
+
+Edges:
+
+* Related ideas
+* Shared concepts
+* User connections
+
+Interactive zoomable graph.
+
+Users can explore connections visually.
+
+Example:
+
+Atomic Habits
+
+connected to
+
+Influence
+
+connected to
+
+48 Laws of Power
+
+connected to
+
+Mastery
+
+---
+
+# SECOND BRAIN SYSTEM
+
+Every note, highlight, concept, summary, and insight should be stored in a personal knowledge database.
+
+Users should be able to ask:
+
+What have I learned about leadership?
+
+What books mention habit formation?
+
+Show everything related to motivation.
+
+The AI searches across the entire library.
+
+---
+
+# LEARNING DASHBOARD
+
+Track learning progress.
+
+Metrics:
+
+Books Read
+
+Pages Read
+
+Reading Time
+
+Knowledge Score
+
+Streak
+
+Weekly Activity
+
+Monthly Activity
+
+Completion Rate
+
+Display charts and analytics.
+
+---
+
+# FLASHCARD SYSTEM
+
+AI generates flashcards automatically.
+
+Support:
+
+* Manual cards
+* AI-generated cards
+
+Spaced repetition system.
+
+Review sessions.
+
+Difficulty tracking.
+
+Memory retention scoring.
+
+---
+
+# QUIZ ENGINE
+
+Generate:
+
+* Multiple choice questions
+* True/False
+* Fill in the blank
+* Short answer
+
+Difficulty:
+
+* Easy
+* Medium
+* Hard
+* Expert
+
+---
+
+# READING ROADMAP ENGINE
+
+AI creates learning paths.
+
+Examples:
+
+Learn AI
+
+Learn Business
+
+Become Better at Leadership
+
+Become Better at Negotiation
+
+Become Better at Programming
+
+Roadmaps should recommend books in optimal order.
+
+---
+
+# SEARCH ENGINE
+
+Global search across:
+
+Books
+
+Authors
+
+Highlights
+
+Notes
+
+Concepts
+
+Flashcards
+
+AI summaries
+
+Must be instant and highly responsive.
+
+---
+
+# NOTIFICATION SYSTEM
+
+Reminders:
+
+Daily Reading
+
+Streak Protection
+
+Quiz Review
+
+Flashcard Review
+
+Reading Goals
+
+---
+
+# COMMUNITY FEATURES (FUTURE)
+
+Follow users.
+
+Share bookshelves.
+
+Share notes.
+
+Reading groups.
+
+Book clubs.
+
+Knowledge competitions.
+
+---
+
+# TECH STACK
+
+Frontend:
+
+React Native
+Expo
+TypeScript
+
+State Management:
+
+Zustand
+
+Backend:
+
+FastAPI
+
+Database:
+
+PostgreSQL
+
+Caching:
+
+Redis
+
+Search:
+
+Meilisearch
+
+Storage:
+
+AWS S3
+
+Authentication:
+
+Supabase Auth
+
+AI Layer:
+
+OpenAI
+Local LLM Support
+
+Vector Database:
+
+Qdrant
+
+PDF Processing:
+
+PyMuPDF
+
+Animations:
+
+React Native Reanimated
+React Native Gesture Handler
+
+Charts:
+
+Victory Native
+
+---
+
+# NON-FUNCTIONAL REQUIREMENTS
+
+Fast.
+
+Scalable.
+
+Offline capable.
+
+Secure.
+
+Responsive.
+
+Accessibility compliant.
+
+Battery efficient.
+
+Modern.
+
+Premium.
+
+Future-proof.
+
+---
+
+# FINAL GOAL
+
+The finished product should feel like the world's most advanced personal library and knowledge management platform, where reading a book is not simply consuming information but permanently transforming that information into a searchable, interconnected intelligence system that grows smarter as the user learns.
