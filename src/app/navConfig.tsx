@@ -1,4 +1,4 @@
-import { Home, Library, Brain, Network, BarChart2, Layers } from "lucide-react"
+import { Home, Library, Brain, Network, BarChart2, Layers, UserCircle } from "lucide-react"
 import type { View } from "./types"
 
 export const NAV_ITEMS: { view: View, label: string, icon: React.FC<any> }[] = [
@@ -8,4 +8,5 @@ export const NAV_ITEMS: { view: View, label: string, icon: React.FC<any> }[] = [
   { view: "graph", label: "Knowledge", icon: Network },
   { view: "learning", label: "Analytics", icon: BarChart2 },
   { view: "flashcards", label: "Flashcards", icon: Layers },
+  { view: "profile", label: "Profile", icon: UserCircle },
 ]

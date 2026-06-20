@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "motion/react"
-import { Menu, Search, Bell, Sun, Moon, Sparkles, Settings, LogOut, Loader } from "lucide-react"
+import { Menu, Search, Bell, Sun, Moon, Sparkles, LogOut, Loader, ShieldAlert } from "lucide-react"
 import { LIGHT_THEME, DARK_THEME } from "./theme"
 import type { View } from "./types"
 import { NAV_ITEMS } from "./navConfig"
@@ -12,6 +12,8 @@ import { LearningView } from "./views/LearningView"
 import { FlashcardsView } from "./views/FlashcardsView"
 import { SignInView } from "./views/SignInView"
 import { SignUpView } from "./views/SignUpView"
+import { ProfileView } from "./views/ProfileView"
+import { AdminView } from "./views/AdminView"
 import { supabase } from "./supabaseClient"
 import type { User } from "@supabase/supabase-js"
 
@@ -22,17 +24,28 @@ export default function App() {
   const [user, setUser] = useState<User | null>(null)
   const [authLoading, setAuthLoading] = useState(true)
   const [authScreen, setAuthScreen] = useState<"signin" | "signup">("signin")
+  const [role, setRole] = useState<string>("user")
 
   useEffect(() => {
-    // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null)
       setAuthLoading(false)
+      if (session?.user) {
+        supabase.from("profiles").select("role").eq("id", session.user.id).maybeSingle().then(({ data }) => {
+          if (data) setRole(data.role)
+        })
+      }
     })
 
-    // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null)
+      if (session?.user) {
+        supabase.from("profiles").select("role").eq("id", session.user.id).maybeSingle().then(({ data }) => {
+          if (data) setRole(data.role)
+        })
+      } else {
+        setRole("user")
+      }
     })
 
     return () => subscription.unsubscribe()
@@ -42,7 +55,6 @@ export default function App() {
     await supabase.auth.signOut()
   }
 
-  // Loading screen while checking auth
   if (authLoading) return (
     <div className="min-h-screen flex items-center justify-center" style={{ background: "#050816" }}>
       <div className="flex flex-col items-center gap-3">
@@ -54,7 +66,6 @@ export default function App() {
     </div>
   )
 
-  // Auth screens
   if (!user) {
     return authScreen === "signin"
       ? <SignInView onSwitch={() => setAuthScreen("signup")} />
@@ -63,6 +74,11 @@ export default function App() {
 
   const displayName = user.user_metadata?.full_name?.split(" ")[0] ?? user.email?.split("@")[0] ?? "User"
   const initials = displayName[0]?.toUpperCase() ?? "U"
+
+  const navItems = [
+    ...NAV_ITEMS,
+    ...(role === "admin" ? [{ view: "admin" as View, label: "Admin", icon: ShieldAlert }] : [])
+  ]
 
   return (
     <>
@@ -113,7 +129,7 @@ export default function App() {
 
           {/* Nav */}
           <nav className="flex-1 px-3 space-y-0.5">
-            {NAV_ITEMS.map(({ view: v, label, icon: Icon }) => {
+            {navItems.map(({ view: v, label, icon: Icon }) => {
               const active = view === v
               return (
                 <button
@@ -206,12 +222,14 @@ export default function App() {
                 className="max-w-5xl mx-auto"
                 style={{ minHeight: "100%" }}
               >
-                {view === "home" && <HomeView onNavigate={setView} />}
+                {view === "home" && <HomeView onNavigate={setView} displayName={displayName} />}
                 {view === "library" && <LibraryView />}
                 {view === "ai" && <AIView />}
                 {view === "graph" && <GraphView />}
                 {view === "learning" && <LearningView />}
                 {view === "flashcards" && <FlashcardsView />}
+                {view === "profile" && <ProfileView />}
+                {view === "admin" && role === "admin" && <AdminView />}
               </motion.div>
             </AnimatePresence>
           </main>

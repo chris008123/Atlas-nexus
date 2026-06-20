@@ -6,7 +6,7 @@ import { supabase } from "../supabaseClient"
 import type { Book } from "../mockData"
 import type { View } from "../types"
 
-export function HomeView({ onNavigate }: { onNavigate: (v: View) => void }) {
+export function HomeView({ onNavigate, displayName }: { onNavigate: (v: View) => void, displayName: string }) {
   const [books, setBooks] = useState<Book[]>([])
 
   useEffect(() => {
@@ -44,7 +44,7 @@ export function HomeView({ onNavigate }: { onNavigate: (v: View) => void }) {
             </span>
           </div>
           <h1 className="text-4xl font-bold text-white mb-1.5" style={{ fontFamily: "'Chakra Petch', sans-serif", letterSpacing: "-0.5px" }}>
-            {greeting}, Chris.
+            {greeting}, {displayName}.
           </h1>
           <p className="text-white/50 text-base mb-6" style={{ fontFamily: "'DM Sans', sans-serif" }}>
             {books.length > 0
