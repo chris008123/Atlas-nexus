@@ -55,9 +55,15 @@ export function AddBookModal({ onClose, onAdd, shelves }: {
     if (file.type !== "application/pdf") return
     setPdfFile(file)
     if (!title.trim()) {
-      const newTitle = file.name.replace(/\.pdf$/i, "").replace(/[-_]/g, " ")
-      setTitle(newTitle)
-      setTimeout(() => fetchCover(newTitle, author), 100)
+      // Clean filename — take only first part before any comma, bracket or isbn
+      const cleaned = file.name
+        .replace(/\.pdf$/i, "")
+        .replace(/[-_]/g, " ")
+        .split(/[,\[\(]/)[0]  // stop at comma, bracket or parenthesis
+        .trim()
+        .slice(0, 60)          // max 60 chars
+      setTitle(cleaned)
+      setTimeout(() => fetchCover(cleaned, author), 100)
     }
   }
 
