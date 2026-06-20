@@ -44,7 +44,7 @@ export function SignInView({ onSwitch }: { onSwitch: () => void }) {
             <span className="text-white font-bold" style={{ fontFamily: "'Chakra Petch', sans-serif" }}>N</span>
           </div>
           <div>
-            <p className="text-white font-bold text-sm leading-none" style={{ fontFamily: "'Chakra Petch', sans-serif", letterSpacing: "0.05em" }}>NEXUS</p>
+            <p className="text-white font-bold text-sm leading-none" style={{ fontFamily: "'Chakra Petch', sans-serif", letterSpacing: "0.05em" }}>ATLAS NEXUS</p>
             <p className="text-[9px] text-white/30 mt-0.5 tracking-widest uppercase" style={{ fontFamily: "'JetBrains Mono', monospace" }}>Knowledge OS</p>
           </div>
         </div>

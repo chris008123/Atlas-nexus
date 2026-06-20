@@ -74,10 +74,10 @@ export function SignUpView({ onSwitch }: { onSwitch: () => void }) {
         {/* Logo */}
         <div className="flex items-center gap-3 mb-8 justify-center">
           <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: "linear-gradient(135deg, #2D8CFF, #1a6fd4)", boxShadow: "0 0 20px rgba(45,140,255,0.4)" }}>
-            <span className="text-white font-bold" style={{ fontFamily: "'Chakra Petch', sans-serif" }}>N</span>
+            <span className="text-white font-bold" style={{ fontFamily: "'Chakra Petch', sans-serif" }}>A-N</span>
           </div>
           <div>
-            <p className="text-white font-bold text-sm leading-none" style={{ fontFamily: "'Chakra Petch', sans-serif", letterSpacing: "0.05em" }}>NEXUS</p>
+            <p className="text-white font-bold text-sm leading-none" style={{ fontFamily: "'Chakra Petch', sans-serif", letterSpacing: "0.05em" }}>ATLAS NEXUS</p>
             <p className="text-[9px] text-white/30 mt-0.5 tracking-widest uppercase" style={{ fontFamily: "'JetBrains Mono', monospace" }}>Knowledge OS</p>
           </div>
         </div>
