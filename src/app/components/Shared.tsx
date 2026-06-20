@@ -4,6 +4,27 @@ import type { Book } from "../mockData"
 
 export function BookCover({ book, className = "", size = "md" }: { book: Book, className?: string, size?: "sm" | "md" | "lg" }) {
   const dims = size === "sm" ? "w-12 h-16" : size === "lg" ? "w-28 h-40" : "w-20 h-28"
+
+  if (book.cover_url) {
+    return (
+      <div
+        className={`${dims} ${className} rounded flex-shrink-0 relative overflow-hidden`}
+        style={{ boxShadow: `0 4px 20px ${book.color}22`, border: `1px solid ${book.color}33` }}
+      >
+        <img
+          src={book.cover_url}
+          alt={book.title}
+          className="w-full h-full object-cover"
+        />
+        {book.status === "completed" && (
+          <div className="absolute top-1 right-1 w-3.5 h-3.5 rounded-full flex items-center justify-center" style={{ background: "#22C55E22", border: "1px solid #22C55E66" }}>
+            <Check size={8} color="#22C55E" />
+          </div>
+        )}
+      </div>
+    )
+  }
+
   return (
     <div
       className={`${dims} ${className} rounded flex-shrink-0 relative overflow-hidden`}
@@ -13,10 +34,7 @@ export function BookCover({ book, className = "", size = "md" }: { book: Book, c
         boxShadow: `0 4px 20px ${book.color}22`
       }}
     >
-      <div
-        className="absolute inset-0 opacity-10"
-        style={{ background: `radial-gradient(circle at 80% 20%, ${book.color} 0%, transparent 60%)` }}
-      />
+      <div className="absolute inset-0 opacity-10" style={{ background: `radial-gradient(circle at 80% 20%, ${book.color} 0%, transparent 60%)` }} />
       <div className="absolute bottom-0 left-0 right-0 p-1.5">
         <p className="text-[9px] font-bold leading-tight text-white line-clamp-3" style={{ fontFamily: "'Chakra Petch', sans-serif" }}>
           {book.title}

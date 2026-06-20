@@ -112,6 +112,7 @@ export function LibraryView() {
       pages: data.pages,
       color: data.color,
       pdf_url,
+      cover_url: data.cover_url ?? null,
       user_id: (await supabase.auth.getUser()).data.user?.id,
     }]).select().single()
 
@@ -134,6 +135,7 @@ export function LibraryView() {
       notes: 0,
       timeSpent: "0h 0m",
       pdf_url: saved.pdf_url,
+      cover_url: saved.cover_url,
     }
 
     setLibraryBooks(prev => [newBook, ...prev])

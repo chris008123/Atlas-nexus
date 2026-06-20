@@ -28,6 +28,7 @@ export type Book = {
   notes: number
   timeSpent: string
   pdf_url?: string | null
+  cover_url?: string | null
 }
 
 export const SHELVES = ["All", "Psychology", "Strategy", "Programming", "Business", "AI"]

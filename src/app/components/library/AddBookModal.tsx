@@ -1,10 +1,12 @@
-import { useState, useRef } from "react"
+import { useState, useRef, useCallback } from "react"
 import { motion } from "motion/react"
-import { X, Upload, FileText } from "lucide-react"
+import { X, Upload, FileText, Loader } from "lucide-react"
 import { NEW_BOOK_COLORS } from "./libraryUtils"
 
 export function AddBookModal({ onClose, onAdd, shelves }: {
-  onClose: () => void, onAdd: (b: { title: string, author: string, shelf: string, pages: number, color: string, file?: File }) => void, shelves: string[]
+  onClose: () => void,
+  onAdd: (b: { title: string, author: string, shelf: string, pages: number, color: string, file?: File, cover_url?: string }) => void,
+  shelves: string[]
 }) {
   const [title, setTitle] = useState("")
   const [author, setAuthor] = useState("")
@@ -12,14 +14,49 @@ export function AddBookModal({ onClose, onAdd, shelves }: {
   const [pages, setPages] = useState("")
   const [pdfFile, setPdfFile] = useState<File | null>(null)
   const [isDragging, setIsDragging] = useState(false)
+  const [coverUrl, setCoverUrl] = useState<string | null>(null)
+  const [fetchingCover, setFetchingCover] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  async function fetchCover(bookTitle: string, bookAuthor: string) {
+    if (!bookTitle.trim()) return
+    setFetchingCover(true)
+    try {
+      const query = encodeURIComponent(`${bookTitle} ${bookAuthor}`.trim())
+      const res = await fetch(`https://openlibrary.org/search.json?q=${query}&limit=1&fields=cover_i`)
+      const data = await res.json()
+      const coverId = data.docs?.[0]?.cover_i
+      if (coverId) {
+        setCoverUrl(`https://covers.openlibrary.org/b/id/${coverId}-M.jpg`)
+      } else {
+        setCoverUrl(null)
+      }
+    } catch {
+      setCoverUrl(null)
+    }
+    setFetchingCover(false)
+  }
+
+  function handleTitleChange(val: string) {
+    setTitle(val)
+    if (debounceRef.current) clearTimeout(debounceRef.current)
+    debounceRef.current = setTimeout(() => fetchCover(val, author), 800)
+  }
+
+  function handleAuthorChange(val: string) {
+    setAuthor(val)
+    if (debounceRef.current) clearTimeout(debounceRef.current)
+    debounceRef.current = setTimeout(() => fetchCover(title, val), 800)
+  }
 
   function handleFile(file: File) {
     if (file.type !== "application/pdf") return
     setPdfFile(file)
-    // Auto-fill title from filename (strip .pdf extension)
     if (!title.trim()) {
-      setTitle(file.name.replace(/\.pdf$/i, "").replace(/[-_]/g, " "))
+      const newTitle = file.name.replace(/\.pdf$/i, "").replace(/[-_]/g, " ")
+      setTitle(newTitle)
+      setTimeout(() => fetchCover(newTitle, author), 100)
     }
   }
 
@@ -39,6 +76,7 @@ export function AddBookModal({ onClose, onAdd, shelves }: {
       pages: parseInt(pages, 10) || 200,
       color: NEW_BOOK_COLORS[Math.floor(Math.random() * NEW_BOOK_COLORS.length)],
       file: pdfFile ?? undefined,
+      cover_url: coverUrl ?? undefined,
     })
   }
 
@@ -74,6 +112,33 @@ export function AddBookModal({ onClose, onAdd, shelves }: {
 
         <h3 className="text-lg font-bold text-white mb-1" style={{ fontFamily: "'Chakra Petch', sans-serif" }}>Add Book</h3>
         <p className="text-xs text-white/40 mb-5" style={{ fontFamily: "'DM Sans', sans-serif" }}>Upload a PDF and add it to your digital library.</p>
+
+        {/* Cover preview */}
+        {(coverUrl || fetchingCover) && (
+          <div className="flex items-center gap-3 mb-4 p-3 rounded-xl" style={{ background: "rgba(45,140,255,0.05)", border: "1px solid rgba(45,140,255,0.12)" }}>
+            <div className="w-10 h-14 rounded overflow-hidden flex-shrink-0 flex items-center justify-center" style={{ background: "rgba(255,255,255,0.04)" }}>
+              {fetchingCover ? (
+                <Loader size={14} color="#2D8CFF" className="animate-spin" />
+              ) : coverUrl ? (
+                <img src={coverUrl} alt="cover" className="w-full h-full object-cover" />
+              ) : null}
+            </div>
+            <div>
+              <p className="text-xs font-medium text-white/70" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+                {fetchingCover ? "Fetching cover…" : "Cover found"}
+              </p>
+              {!fetchingCover && coverUrl && (
+                <button
+                  onClick={() => setCoverUrl(null)}
+                  className="text-[10px] text-white/30 hover:text-white/60 transition-colors mt-0.5"
+                  style={{ fontFamily: "'DM Sans', sans-serif" }}
+                >
+                  Remove
+                </button>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* PDF Drop Zone */}
         <div
@@ -121,23 +186,23 @@ export function AddBookModal({ onClose, onAdd, shelves }: {
         <div className="space-y-3">
           <input
             value={title}
-            onChange={e => setTitle(e.target.value)}
+            onChange={e => handleTitleChange(e.target.value)}
             placeholder="Book title"
-            className="w-full px-3.5 py-2.5 rounded-lg text-sm text-white/85 outline-none focus:border-[#2D8CFF]/40 transition-colors"
+            className="w-full px-3.5 py-2.5 rounded-lg text-sm text-white/85 outline-none transition-colors"
             style={{ background: "rgba(17,24,39,0.7)", border: "1px solid rgba(45,140,255,0.15)", fontFamily: "'DM Sans', sans-serif" }}
           />
           <input
             value={author}
-            onChange={e => setAuthor(e.target.value)}
+            onChange={e => handleAuthorChange(e.target.value)}
             placeholder="Author"
-            className="w-full px-3.5 py-2.5 rounded-lg text-sm text-white/85 outline-none focus:border-[#2D8CFF]/40 transition-colors"
+            className="w-full px-3.5 py-2.5 rounded-lg text-sm text-white/85 outline-none transition-colors"
             style={{ background: "rgba(17,24,39,0.7)", border: "1px solid rgba(45,140,255,0.15)", fontFamily: "'DM Sans', sans-serif" }}
           />
           <div className="flex gap-2">
             <select
               value={shelf}
               onChange={e => setShelf(e.target.value)}
-              className="flex-1 px-3.5 py-2.5 rounded-lg text-sm text-white/85 outline-none focus:border-[#2D8CFF]/40 transition-colors"
+              className="flex-1 px-3.5 py-2.5 rounded-lg text-sm text-white/85 outline-none transition-colors"
               style={{ background: "rgba(17,24,39,0.7)", border: "1px solid rgba(45,140,255,0.15)", fontFamily: "'DM Sans', sans-serif" }}
             >
               {shelves.map(s => <option key={s} value={s} style={{ background: "#111827" }}>{s}</option>)}
@@ -147,7 +212,7 @@ export function AddBookModal({ onClose, onAdd, shelves }: {
               onChange={e => setPages(e.target.value)}
               placeholder="Pages"
               type="number"
-              className="w-24 px-3.5 py-2.5 rounded-lg text-sm text-white/85 outline-none focus:border-[#2D8CFF]/40 transition-colors"
+              className="w-24 px-3.5 py-2.5 rounded-lg text-sm text-white/85 outline-none transition-colors"
               style={{ background: "rgba(17,24,39,0.7)", border: "1px solid rgba(45,140,255,0.15)", fontFamily: "'DM Sans', sans-serif" }}
             />
           </div>
