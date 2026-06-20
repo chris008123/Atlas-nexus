@@ -1,6 +1,6 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "motion/react"
-import { Menu, Search, Bell, Sun, Moon, Sparkles, Settings } from "lucide-react"
+import { Menu, Search, Bell, Sun, Moon, Sparkles, Settings, LogOut, Loader } from "lucide-react"
 import { LIGHT_THEME, DARK_THEME } from "./theme"
 import type { View } from "./types"
 import { NAV_ITEMS } from "./navConfig"
@@ -10,11 +10,59 @@ import { AIView } from "./views/AIView"
 import { GraphView } from "./views/GraphView"
 import { LearningView } from "./views/LearningView"
 import { FlashcardsView } from "./views/FlashcardsView"
+import { SignInView } from "./views/SignInView"
+import { SignUpView } from "./views/SignUpView"
+import { supabase } from "./supabaseClient"
+import type { User } from "@supabase/supabase-js"
 
 export default function App() {
   const [view, setView] = useState<View>("home")
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [isLight, setIsLight] = useState(false)
+  const [user, setUser] = useState<User | null>(null)
+  const [authLoading, setAuthLoading] = useState(true)
+  const [authScreen, setAuthScreen] = useState<"signin" | "signup">("signin")
+
+  useEffect(() => {
+    // Get initial session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null)
+      setAuthLoading(false)
+    })
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null)
+    })
+
+    return () => subscription.unsubscribe()
+  }, [])
+
+  async function handleSignOut() {
+    await supabase.auth.signOut()
+  }
+
+  // Loading screen while checking auth
+  if (authLoading) return (
+    <div className="min-h-screen flex items-center justify-center" style={{ background: "#050816" }}>
+      <div className="flex flex-col items-center gap-3">
+        <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: "linear-gradient(135deg, #2D8CFF, #1a6fd4)", boxShadow: "0 0 20px rgba(45,140,255,0.4)" }}>
+          <span className="text-white font-bold" style={{ fontFamily: "'Chakra Petch', sans-serif" }}>N</span>
+        </div>
+        <Loader size={16} color="#2D8CFF" className="animate-spin mt-1" />
+      </div>
+    </div>
+  )
+
+  // Auth screens
+  if (!user) {
+    return authScreen === "signin"
+      ? <SignInView onSwitch={() => setAuthScreen("signup")} />
+      : <SignUpView onSwitch={() => setAuthScreen("signin")} />
+  }
+
+  const displayName = user.user_metadata?.full_name?.split(" ")[0] ?? user.email?.split("@")[0] ?? "User"
+  const initials = displayName[0]?.toUpperCase() ?? "U"
 
   return (
     <>
@@ -25,10 +73,7 @@ export default function App() {
         <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
           <div className="absolute top-0 left-1/4 w-96 h-96 rounded-full blur-[120px]" style={{ background: "rgba(45,140,255,0.06)" }} />
           <div className="absolute bottom-1/4 right-1/4 w-64 h-64 rounded-full blur-[100px]" style={{ background: "rgba(90,169,255,0.04)" }} />
-          <div
-            className="absolute inset-0 opacity-[0.025]"
-            style={{ backgroundImage: "radial-gradient(circle at 1px 1px, rgba(45,140,255,1) 1px, transparent 0)", backgroundSize: "32px 32px" }}
-          />
+          <div className="absolute inset-0 opacity-[0.025]" style={{ backgroundImage: "radial-gradient(circle at 1px 1px, rgba(45,140,255,1) 1px, transparent 0)", backgroundSize: "32px 32px" }} />
         </div>
 
         {/* Mobile sidebar overlay */}
@@ -48,19 +93,14 @@ export default function App() {
         {/* Sidebar */}
         <motion.aside
           className="fixed md:relative z-40 md:z-auto flex-shrink-0 flex flex-col h-full"
-          style={{
-            width: 220,
-            background: "linear-gradient(180deg, #0A0F1F 0%, #050816 100%)",
-            borderRight: "1px solid rgba(45,140,255,0.1)",
-          }}
+          style={{ width: 220, background: "linear-gradient(180deg, #0A0F1F 0%, #050816 100%)", borderRight: "1px solid rgba(45,140,255,0.1)" }}
           initial={false}
           animate={{ x: sidebarOpen || typeof window !== "undefined" && window.innerWidth >= 768 ? 0 : -220 }}
           transition={{ duration: 0.25, ease: "easeInOut" }}
         >
           {/* Logo */}
           <div className="px-5 py-5 flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
-              style={{ background: "linear-gradient(135deg, #2D8CFF, #1a6fd4)", boxShadow: "0 0 16px rgba(45,140,255,0.4)" }}>
+            <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: "linear-gradient(135deg, #2D8CFF, #1a6fd4)", boxShadow: "0 0 16px rgba(45,140,255,0.4)" }}>
               <span className="text-white font-bold text-sm" style={{ fontFamily: "'Chakra Petch', sans-serif" }}>N</span>
             </div>
             <div>
@@ -79,25 +119,11 @@ export default function App() {
                 <button
                   key={v}
                   onClick={() => { setView(v); setSidebarOpen(false) }}
-                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-all duration-200 group"
-                  style={{
-                    background: active ? "rgba(45,140,255,0.12)" : "transparent",
-                    border: `1px solid ${active ? "rgba(45,140,255,0.25)" : "transparent"}`,
-                  }}
+                  className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-all duration-200"
+                  style={{ background: active ? "rgba(45,140,255,0.12)" : "transparent", border: `1px solid ${active ? "rgba(45,140,255,0.25)" : "transparent"}` }}
                 >
-                  <Icon
-                    size={16}
-                    color={active ? "#2D8CFF" : "rgba(255,255,255,0.35)"}
-                    style={{ transition: "color 0.2s", flexShrink: 0 }}
-                  />
-                  <span
-                    className="text-sm font-medium"
-                    style={{
-                      color: active ? "#fff" : "rgba(255,255,255,0.45)",
-                      fontFamily: "'DM Sans', sans-serif",
-                      transition: "color 0.2s",
-                    }}
-                  >
+                  <Icon size={16} color={active ? "#2D8CFF" : "rgba(255,255,255,0.35)"} style={{ flexShrink: 0 }} />
+                  <span className="text-sm font-medium" style={{ color: active ? "#fff" : "rgba(255,255,255,0.45)", fontFamily: "'DM Sans', sans-serif" }}>
                     {label}
                   </span>
                   {active && <div className="ml-auto w-1 h-1 rounded-full" style={{ background: "#2D8CFF" }} />}
@@ -109,16 +135,18 @@ export default function App() {
           {/* Bottom user */}
           <div className="p-4">
             <div className="mx-0 h-px mb-4" style={{ background: "rgba(45,140,255,0.08)" }} />
-            <div className="flex items-center gap-3 px-2 py-2 rounded-xl cursor-pointer hover:bg-white/[0.03] transition-colors">
+            <div className="flex items-center gap-3 px-2 py-2 rounded-xl">
               <div className="w-7 h-7 rounded-full flex-shrink-0 flex items-center justify-center text-xs font-bold text-white"
                 style={{ background: "linear-gradient(135deg, #2D8CFF, #9B59B6)" }}>
-                C
+                {initials}
               </div>
               <div className="min-w-0 flex-1">
-                <p className="text-xs font-semibold text-white leading-none">Chris</p>
-                <p className="text-[10px] text-white/30 mt-0.5 truncate" style={{ fontFamily: "'JetBrains Mono', monospace" }}>Lvl 12 · Scholar</p>
+                <p className="text-xs font-semibold text-white leading-none">{displayName}</p>
+                <p className="text-[10px] text-white/30 mt-0.5 truncate" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{user.email}</p>
               </div>
-              <Settings size={13} color="rgba(255,255,255,0.25)" />
+              <button onClick={handleSignOut} title="Sign out" className="text-white/25 hover:text-white/60 transition-colors">
+                <LogOut size={13} />
+              </button>
             </div>
           </div>
         </motion.aside>
@@ -126,8 +154,7 @@ export default function App() {
         {/* Main content */}
         <div className="flex-1 flex flex-col min-w-0 relative z-10">
           {/* Top bar */}
-          <header className="flex-shrink-0 flex items-center justify-between px-5 md:px-6 py-4"
-            style={{ borderBottom: "1px solid rgba(45,140,255,0.08)" }}>
+          <header className="flex-shrink-0 flex items-center justify-between px-5 md:px-6 py-4" style={{ borderBottom: "1px solid rgba(45,140,255,0.08)" }}>
             <div className="flex items-center gap-3">
               <button
                 className="md:hidden w-8 h-8 rounded-lg flex items-center justify-center"
@@ -141,38 +168,28 @@ export default function App() {
                 <input
                   placeholder="Quick search…"
                   className="pl-9 pr-4 py-2 rounded-xl text-xs text-white/70 outline-none w-56 transition-all focus:w-72"
-                  style={{
-                    background: "rgba(17,24,39,0.6)",
-                    border: "1px solid rgba(45,140,255,0.1)",
-                    fontFamily: "'DM Sans', sans-serif",
-                  }}
+                  style={{ background: "rgba(17,24,39,0.6)", border: "1px solid rgba(45,140,255,0.1)", fontFamily: "'DM Sans', sans-serif" }}
                 />
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <button className="w-8 h-8 rounded-lg flex items-center justify-center relative hover:bg-white/[0.04] transition-colors"
-                style={{ border: "1px solid rgba(255,255,255,0.06)" }}>
+              <button className="w-8 h-8 rounded-lg flex items-center justify-center relative hover:bg-white/[0.04] transition-colors" style={{ border: "1px solid rgba(255,255,255,0.06)" }}>
                 <Bell size={14} color="rgba(255,255,255,0.45)" />
                 <div className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full" style={{ background: "#2D8CFF" }} />
               </button>
-
-              {/* ── THEME TOGGLE ── */}
               <button
                 onClick={() => setIsLight(l => !l)}
                 className="w-8 h-8 rounded-lg flex items-center justify-center transition-all hover:opacity-80"
                 style={{ background: "rgba(45,140,255,0.08)", border: "1px solid rgba(45,140,255,0.2)" }}
-                title={isLight ? "Switch to dark mode" : "Switch to light mode"}
               >
                 {isLight ? <Moon size={14} color="#5AA9FF" /> : <Sun size={14} color="#5AA9FF" />}
               </button>
-
               <button
                 onClick={() => setView("ai")}
                 className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium transition-all hover:opacity-85"
                 style={{ background: "rgba(45,140,255,0.12)", border: "1px solid rgba(45,140,255,0.22)", color: "#5AA9FF", fontFamily: "'DM Sans', sans-serif" }}
               >
-                <Sparkles size={12} />
-                Ask AI
+                <Sparkles size={12} /> Ask AI
               </button>
             </div>
           </header>

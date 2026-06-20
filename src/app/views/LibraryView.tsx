@@ -112,6 +112,7 @@ export function LibraryView() {
       pages: data.pages,
       color: data.color,
       pdf_url,
+      user_id: (await supabase.auth.getUser()).data.user?.id,
     }]).select().single()
 
     if (error) {
