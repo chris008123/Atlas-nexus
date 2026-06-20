@@ -1,10 +1,11 @@
-import { useState, useCallback } from "react"
+import { useState, useCallback, useEffect } from "react"
 import { motion, AnimatePresence } from "motion/react"
 import { Document, Page, pdfjs } from "react-pdf"
 import { X, ChevronLeft, ChevronRight, ZoomIn, ZoomOut, Loader } from "lucide-react"
 import type { Book } from "../../mockData"
 import "react-pdf/dist/Page/AnnotationLayer.css"
 import "react-pdf/dist/Page/TextLayer.css"
+import { getLocalPDF } from "../../utils/pdfStorage"
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
   "pdfjs-dist/build/pdf.worker.min.mjs",
@@ -16,6 +17,17 @@ export function PDFReader({ book, onClose }: { book: Book, onClose: () => void }
   const [pageNumber, setPageNumber] = useState(1)
   const [scale, setScale] = useState(1.2)
   const [loading, setLoading] = useState(true)
+  const [resolvedUrl, setResolvedUrl] = useState<string | null>(book.pdf_url ?? null)
+
+  useEffect(() => {
+    if (book.pdf_url) {
+      setResolvedUrl(book.pdf_url)
+      return
+    }
+    getLocalPDF(String(book.id)).then(url => {
+      if (url) setResolvedUrl(url)
+    })
+  }, [book.pdf_url, book.id])
 
   const onDocumentLoadSuccess = useCallback(({ numPages }: { numPages: number }) => {
     setNumPages(numPages)
@@ -128,7 +140,7 @@ export function PDFReader({ book, onClose }: { book: Book, onClose: () => void }
       {/* PDF canvas area */}
       <div className="flex-1 overflow-auto flex items-start justify-center py-8 px-4" style={{ scrollbarWidth: "thin", scrollbarColor: "rgba(45,140,255,0.2) transparent" }}>
         <AnimatePresence>
-          {loading && (
+          {loading && resolvedUrl && (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -143,9 +155,9 @@ export function PDFReader({ book, onClose }: { book: Book, onClose: () => void }
           )}
         </AnimatePresence>
 
-        {book.pdf_url && (
+        {resolvedUrl ? (
           <Document
-            file={book.pdf_url}
+            file={resolvedUrl}
             onLoadSuccess={onDocumentLoadSuccess}
             loading=""
           >
@@ -168,11 +180,12 @@ export function PDFReader({ book, onClose }: { book: Book, onClose: () => void }
               />
             </motion.div>
           </Document>
-        )}
-
-        {!book.pdf_url && (
+        ) : (
           <div className="flex flex-col items-center gap-3 mt-24">
-            <p className="text-sm text-white/30" style={{ fontFamily: "'DM Sans', sans-serif" }}>No PDF attached to this book.</p>
+            <Loader size={22} color="#2D8CFF" className="animate-spin" />
+            <p className="text-sm text-white/30" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+              Preparing PDF…
+            </p>
           </div>
         )}
       </div>

@@ -18,6 +18,7 @@ export function AddBookModal({ onClose, onAdd, shelves }: {
   const [fetchingCover, setFetchingCover] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const [submitting, setSubmitting] = useState(false)
 
   async function fetchCover(bookTitle: string, bookAuthor: string) {
     if (!bookTitle.trim()) return
@@ -69,6 +70,7 @@ export function AddBookModal({ onClose, onAdd, shelves }: {
 
   function handleSubmit() {
     if (!title.trim() || !author.trim()) return
+    setSubmitting(true)
     onAdd({
       title: title.trim(),
       author: author.trim(),
@@ -220,11 +222,16 @@ export function AddBookModal({ onClose, onAdd, shelves }: {
 
         <button
           onClick={handleSubmit}
-          disabled={!title.trim() || !author.trim()}
-          className="w-full mt-5 py-2.5 rounded-xl font-semibold text-sm transition-all hover:opacity-90 disabled:opacity-40 disabled:hover:opacity-40"
+          disabled={!title.trim() || !author.trim() || submitting}
+          className="w-full mt-5 py-2.5 rounded-xl font-semibold text-sm transition-all hover:opacity-90 disabled:opacity-40 disabled:hover:opacity-40 flex items-center justify-center gap-2"
           style={{ background: "linear-gradient(135deg, #2D8CFF, #1a6fd4)", color: "#fff", fontFamily: "'DM Sans', sans-serif" }}
         >
-          Add to Library
+          {submitting ? (
+            <>
+              <Loader size={14} className="animate-spin" />
+              {pdfFile ? "Uploading PDF…" : "Adding book…"}
+            </>
+          ) : "Add to Library"}
         </button>
       </motion.div>
     </motion.div>

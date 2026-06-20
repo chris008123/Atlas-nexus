@@ -16,6 +16,7 @@ import { AddBookModal } from "../components/library/AddBookModal"
 import type { Book } from "../mockData"
 import { supabase } from "../supabaseClient"
 import { PDFReader } from "../components/library/PDFReader"
+import { savePDFLocally, deleteLocalPDF } from "../utils/pdfStorage"
 
 export const SHELVES = ["All", "Psychology", "Strategy", "Programming", "Business", "AI"]
 
@@ -28,7 +29,6 @@ export function LibraryView() {
   const [recentSearches, setRecentSearches] = useState<string[]>([])
   const [showAddModal, setShowAddModal] = useState(false)
   const [readerBook, setReaderBook] = useState<Book | null>(null)
-  
 
   useEffect(() => {
     async function loadBooks() {
@@ -36,7 +36,9 @@ export function LibraryView() {
         .from("books")
         .select("*")
         .order("created_at", { ascending: false })
+      console.log("books loaded:", data, error)
       if (!error && data) setLibraryBooks(data)
+      else setLibraryBooks([])
     }
     loadBooks()
   }, [])
@@ -69,14 +71,9 @@ export function LibraryView() {
     : []
 
   const continueReadingBook = [...inProgressBooks].sort((a, b) => b.progress - a.progress)[0] || null
-
   const mostReadShelf = Object.entries(shelfCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || "—"
-
-  const otherReading = inProgressBooks
-    .filter(b => b.id !== continueReadingBook?.id)
-    .sort((a, b) => a.progress - b.progress)
+  const otherReading = inProgressBooks.filter(b => b.id !== continueReadingBook?.id).sort((a, b) => a.progress - b.progress)
   const suggestedNext = otherReading[0] || continueReadingBook
-
   const completionRate = totalBooks > 0 ? Math.round((completedBooks.length / totalBooks) * 100) : 0
 
   function commitSearch(value: string) {
@@ -85,33 +82,14 @@ export function LibraryView() {
     setRecentSearches(prev => [v, ...prev.filter(s => s.toLowerCase() !== v.toLowerCase())].slice(0, 4))
   }
 
-  async function handleAddBook(data: { title: string, author: string, shelf: string, pages: number, color: string, file?: File }) {
-    let pdf_url: string | null = null
-
-    // Upload PDF if provided
-    if (data.file) {
-      const fileName = `${Date.now()}-${data.file.name.replace(/\s+/g, "_")}`
-      const { data: uploadData, error: uploadError } = await supabase.storage
-        .from("pdfs")
-        .upload(fileName, data.file, { contentType: "application/pdf" })
-
-      if (uploadError) {
-        console.error("PDF upload failed:", uploadError.message)
-        return
-      }
-
-      const { data: urlData } = supabase.storage.from("pdfs").getPublicUrl(uploadData.path)
-      pdf_url = urlData.publicUrl
-    }
-
-    // Save to database
+  async function handleAddBook(data: { title: string, author: string, shelf: string, pages: number, color: string, file?: File, cover_url?: string }) {
     const { data: saved, error } = await supabase.from("books").insert([{
       title: data.title,
       author: data.author,
       shelf: data.shelf,
       pages: data.pages,
       color: data.color,
-      pdf_url,
+      pdf_url: null,
       cover_url: data.cover_url ?? null,
       user_id: (await supabase.auth.getUser()).data.user?.id,
     }]).select().single()
@@ -121,7 +99,12 @@ export function LibraryView() {
       return
     }
 
-    // Add to local state
+    // Save PDF locally immediately so user can read right away
+    let local_pdf_url: string | null = null
+    if (data.file) {
+      local_pdf_url = await savePDFLocally(saved.id, data.file)
+    }
+
     const newBook = {
       id: saved.id,
       title: saved.title,
@@ -134,14 +117,39 @@ export function LibraryView() {
       highlights: 0,
       notes: 0,
       timeSpent: "0h 0m",
-      pdf_url: saved.pdf_url,
+      pdf_url: local_pdf_url,  // use local URL immediately
       cover_url: saved.cover_url,
     }
 
     setLibraryBooks(prev => [newBook, ...prev])
     setShowAddModal(false)
     setActiveShelf("All")
+
+    // Upload to Supabase in background
+    if (data.file) {
+      const fileName = `${Date.now()}-${data.file.name.replace(/\s+/g, "_")}`
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from("pdfs")
+        .upload(fileName, data.file, { contentType: "application/pdf" })
+
+      if (!uploadError) {
+        const { data: urlData } = supabase.storage.from("pdfs").getPublicUrl(uploadData.path)
+        const pdf_url = urlData.publicUrl
+
+        // Update DB with permanent Supabase URL
+        await supabase.from("books").update({ pdf_url }).eq("id", saved.id)
+
+        // Swap local URL for permanent Supabase URL in state
+        setLibraryBooks(prev => prev.map(b =>
+          b.id === saved.id ? { ...b, pdf_url } : b
+        ))
+
+        // Clean up local storage since we now have the Supabase URL
+        await deleteLocalPDF(saved.id)
+      }
+    }
   }
+
   const groupedByShelf = shelfNames
     .map(shelf => ({ shelf, books: shelfFiltered.filter(b => b.shelf === shelf) }))
     .filter(g => g.books.length > 0)
@@ -401,7 +409,6 @@ export function LibraryView() {
                 ))}
               </div>
 
-              {/* Reading insights — placeholder calculations from real book data */}
               {(() => {
                 const hoursSpent = parseTimeSpent(selectedBook.timeSpent)
                 const velocity = hoursSpent > 0 ? (selectedBook.pages * selectedBook.progress / 100) / hoursSpent : 0
@@ -438,7 +445,6 @@ export function LibraryView() {
                 )
               })()}
 
-              {/* Notes preview */}
               <div className="mb-5 rounded-lg p-3" style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)" }}>
                 <div className="flex items-center justify-between mb-1">
                   <p className="text-[10px] text-white/30 uppercase tracking-wide" style={{ fontFamily: "'JetBrains Mono', monospace" }}>Notes</p>
@@ -457,8 +463,10 @@ export function LibraryView() {
                 >
                   Continue Reading
                 </button>
-                <button className="py-2.5 rounded-xl font-semibold text-sm transition-all hover:border-[#2D8CFF]/50"
-                  style={{ background: "rgba(45,140,255,0.08)", border: "1px solid rgba(45,140,255,0.2)", color: "#5AA9FF", fontFamily: "'DM Sans', sans-serif" }}>
+                <button
+                  className="py-2.5 rounded-xl font-semibold text-sm transition-all hover:border-[#2D8CFF]/50"
+                  style={{ background: "rgba(45,140,255,0.08)", border: "1px solid rgba(45,140,255,0.2)", color: "#5AA9FF", fontFamily: "'DM Sans', sans-serif" }}
+                >
                   Ask Nexus AI
                 </button>
               </div>
@@ -480,7 +488,6 @@ export function LibraryView() {
           <PDFReader book={readerBook} onClose={() => setReaderBook(null)} />
         )}
       </AnimatePresence>
-
     </div>
   )
 }
