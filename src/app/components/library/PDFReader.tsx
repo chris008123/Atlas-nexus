@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react"
+import { useState, useCallback, useEffect, useRef } from "react"
 import { motion, AnimatePresence } from "motion/react"
 import { Document, Page, pdfjs } from "react-pdf"
 import { X, ChevronLeft, ChevronRight, ZoomIn, ZoomOut, Loader } from "lucide-react"
@@ -6,18 +6,40 @@ import type { Book } from "../../mockData"
 import "react-pdf/dist/Page/AnnotationLayer.css"
 import "react-pdf/dist/Page/TextLayer.css"
 import { getLocalPDF } from "../../utils/pdfStorage"
+import { supabase } from "../../supabaseClient"
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
   "pdfjs-dist/build/pdf.worker.min.mjs",
   import.meta.url
 ).toString()
 
-export function PDFReader({ book, onClose }: { book: Book, onClose: () => void }) {
+function formatTimeSpent(totalMinutes: number): string {
+  const h = Math.floor(totalMinutes / 60)
+  const m = totalMinutes % 60
+  return `${h}h ${m}m`
+}
+
+function parseExistingTime(timeSpent: string): number {
+  const match = timeSpent?.match(/(\d+)h\s*(\d+)m/)
+  if (!match) return 0
+  return parseInt(match[1]) * 60 + parseInt(match[2])
+}
+
+export function PDFReader({ book, onClose, onProgressUpdate }: {
+  book: Book
+  onClose: () => void
+  onProgressUpdate?: (bookId: string | number, progress: number, timeSpent: string) => void
+}) {
   const [numPages, setNumPages] = useState<number>(0)
   const [pageNumber, setPageNumber] = useState(1)
   const [scale, setScale] = useState(1.2)
   const [loading, setLoading] = useState(true)
   const [resolvedUrl, setResolvedUrl] = useState<string | null>(book.pdf_url ?? null)
+
+  // Tracking refs
+  const sessionStartRef = useRef<number>(Date.now())
+  const existingMinutesRef = useRef<number>(parseExistingTime(book.timeSpent ?? "0h 0m"))
+  const lastSavedPageRef = useRef<number>(1)
 
   useEffect(() => {
     if (book.pdf_url) {
@@ -29,15 +51,68 @@ export function PDFReader({ book, onClose }: { book: Book, onClose: () => void }
     })
   }, [book.pdf_url, book.id])
 
+  // Save progress to Supabase
+  async function saveProgress(page: number, totalPages: number) {
+    if (totalPages === 0) return
+    const progress = Math.round((page / totalPages) * 100)
+    const sessionMinutes = Math.round((Date.now() - sessionStartRef.current) / 60000)
+    const totalMinutes = existingMinutesRef.current + sessionMinutes
+    const timeSpent = formatTimeSpent(totalMinutes)
+    const status = progress >= 100 ? "completed" : "reading"
+
+    await supabase.from("books").update({
+      progress,
+      time_spent: timeSpent,
+      status,
+    }).eq("id", book.id)
+
+    onProgressUpdate?.(book.id, progress, timeSpent)
+    lastSavedPageRef.current = page
+  }
+
+  // Save on page change (debounced)
+  const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  function scheduleSave(page: number) {
+    if (saveTimerRef.current) clearTimeout(saveTimerRef.current)
+    saveTimerRef.current = setTimeout(() => {
+      saveProgress(page, numPages)
+    }, 1500)
+  }
+
+  // Save when reader closes
+  useEffect(() => {
+    return () => {
+      if (saveTimerRef.current) clearTimeout(saveTimerRef.current)
+      if (numPages > 0) saveProgress(pageNumber, numPages)
+    }
+  }, [pageNumber, numPages])
+
   const onDocumentLoadSuccess = useCallback(({ numPages }: { numPages: number }) => {
     setNumPages(numPages)
     setLoading(false)
-  }, [])
+    // Resume from saved progress
+    if (book.progress && book.progress > 0) {
+      const savedPage = Math.round((book.progress / 100) * numPages)
+      setPageNumber(Math.max(1, savedPage))
+    }
+  }, [book.progress])
 
-  function prev() { setPageNumber(p => Math.max(1, p - 1)) }
-  function next() { setPageNumber(p => Math.min(numPages, p + 1)) }
+  function prev() {
+    const p = Math.max(1, pageNumber - 1)
+    setPageNumber(p)
+    scheduleSave(p)
+  }
+
+  function next() {
+    const p = Math.min(numPages, pageNumber + 1)
+    setPageNumber(p)
+    scheduleSave(p)
+  }
+
   function zoomIn() { setScale(s => Math.min(2.5, +(s + 0.2).toFixed(1))) }
   function zoomOut() { setScale(s => Math.max(0.6, +(s - 0.2).toFixed(1))) }
+
+  const progress = numPages > 0 ? Math.round((pageNumber / numPages) * 100) : 0
 
   return (
     <motion.div
@@ -105,8 +180,18 @@ export function PDFReader({ book, onClose }: { book: Book, onClose: () => void }
           </button>
         </div>
 
-        {/* Right — zoom + close */}
+        {/* Right — progress + zoom + close */}
         <div className="flex items-center gap-2">
+          {/* Live progress indicator */}
+          <div
+            className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg"
+            style={{ background: `${book.color}15`, border: `1px solid ${book.color}30` }}
+          >
+            <span className="text-[11px] font-bold" style={{ color: book.color, fontFamily: "'JetBrains Mono', monospace" }}>
+              {progress}%
+            </span>
+          </div>
+
           <button
             onClick={zoomOut}
             className="w-7 h-7 rounded-lg flex items-center justify-center hover:bg-white/[0.06] transition-all"
@@ -128,7 +213,10 @@ export function PDFReader({ book, onClose }: { book: Book, onClose: () => void }
           <div className="w-px h-5 mx-1" style={{ background: "rgba(255,255,255,0.08)" }} />
 
           <button
-            onClick={onClose}
+            onClick={() => {
+              if (numPages > 0) saveProgress(pageNumber, numPages)
+              onClose()
+            }}
             className="w-7 h-7 rounded-lg flex items-center justify-center hover:bg-white/[0.06] transition-all"
             style={{ border: "1px solid rgba(255,255,255,0.07)" }}
           >
@@ -156,11 +244,7 @@ export function PDFReader({ book, onClose }: { book: Book, onClose: () => void }
         </AnimatePresence>
 
         {resolvedUrl ? (
-          <Document
-            file={resolvedUrl}
-            onLoadSuccess={onDocumentLoadSuccess}
-            loading=""
-          >
+          <Document file={resolvedUrl} onLoadSuccess={onDocumentLoadSuccess} loading="">
             <motion.div
               key={pageNumber}
               initial={{ opacity: 0, y: 6 }}
@@ -183,9 +267,7 @@ export function PDFReader({ book, onClose }: { book: Book, onClose: () => void }
         ) : (
           <div className="flex flex-col items-center gap-3 mt-24">
             <Loader size={22} color="#2D8CFF" className="animate-spin" />
-            <p className="text-sm text-white/30" style={{ fontFamily: "'DM Sans', sans-serif" }}>
-              Preparing PDF…
-            </p>
+            <p className="text-sm text-white/30" style={{ fontFamily: "'DM Sans', sans-serif" }}>Preparing PDF…</p>
           </div>
         )}
       </div>
@@ -200,12 +282,12 @@ export function PDFReader({ book, onClose }: { book: Book, onClose: () => void }
             <motion.div
               className="h-full rounded-full"
               style={{ background: `linear-gradient(90deg, ${book.color}, ${book.color}aa)` }}
-              animate={{ width: `${(pageNumber / numPages) * 100}%` }}
+              animate={{ width: `${progress}%` }}
               transition={{ duration: 0.3 }}
             />
           </div>
           <span className="text-[10px] text-white/25 flex-shrink-0" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
-            {Math.round((pageNumber / numPages) * 100)}%
+            {progress}%
           </span>
         </div>
       )}

@@ -485,7 +485,17 @@ export function LibraryView() {
       {/* PDF Reader */}
       <AnimatePresence>
         {readerBook && (
-          <PDFReader book={readerBook} onClose={() => setReaderBook(null)} />
+          <PDFReader
+            book={readerBook}
+            onClose={() => setReaderBook(null)}
+            onProgressUpdate={(bookId, progress, timeSpent) => {
+              setLibraryBooks(prev => prev.map(b =>
+                b.id === bookId
+                  ? { ...b, progress, timeSpent, status: progress >= 100 ? "completed" : "reading" }
+                  : b
+              ))
+            }}
+          />
         )}
       </AnimatePresence>
     </div>
