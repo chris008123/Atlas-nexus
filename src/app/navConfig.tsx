@@ -1,4 +1,4 @@
-import { Home, Library, Brain, Network, BarChart2, Layers, UserCircle } from "lucide-react"
+import { Home, Library, Brain, Network, BarChart2, Layers, UserCircle, Globe } from "lucide-react"
 import type { View } from "./types"
 
 export const NAV_ITEMS: { view: View, label: string, icon: React.FC<any> }[] = [
