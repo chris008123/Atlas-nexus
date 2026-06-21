@@ -31,7 +31,10 @@ export type Book = {
   cover_url?: string | null
 }
 
-export const SHELVES = ["All", "Psychology", "Strategy", "Programming", "Business", "AI"]
+export const SHELVES = ["All", "Psychology", "Strategy", "Programming", "Business", "AI",
+  "Philosophy", "Science", "History", "Biography", "Self-Help",
+  "Finance", "Health", "Politics", "Fiction", "Mathematics",
+  "Economics", "Leadership", "Productivity", "Spirituality"]
 
 export const READING_DATA = [
   { day: "Mon", pages: 42, minutes: 35 },

@@ -18,7 +18,10 @@ import { supabase } from "../supabaseClient"
 import { PDFReader } from "../components/library/PDFReader"
 import { savePDFLocally, deleteLocalPDF } from "../utils/pdfStorage"
 
-export const SHELVES = ["All", "Psychology", "Strategy", "Programming", "Business", "AI"]
+export const SHELVES = ["All", "Psychology", "Strategy", "Programming", "Business", "AI",
+  "Philosophy", "Science", "History", "Biography", "Self-Help",
+  "Finance", "Health", "Politics", "Fiction", "Mathematics",
+  "Economics", "Leadership", "Productivity", "Spirituality"]
 
 export function LibraryView() {
   const [libraryBooks, setLibraryBooks] = useState<Book[]>([])

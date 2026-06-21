@@ -102,7 +102,10 @@ export function PublicLibraryView({ role }: { role: string }) {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  const SHELVES = ["All", "Psychology", "Strategy", "Programming", "Business", "AI"]
+  const SHELVES = ["All", "Psychology", "Strategy", "Programming", "Business", "AI",
+  "Philosophy", "Science", "History", "Biography", "Self-Help",
+  "Finance", "Health", "Politics", "Fiction", "Mathematics",
+  "Economics", "Leadership", "Productivity", "Spirituality"]
 
   useEffect(() => {
     loadBooks()
@@ -441,7 +444,10 @@ export function PublicLibraryView({ role }: { role: string }) {
                 <textarea value={uploadDescription} onChange={e => setUploadDescription(e.target.value)} placeholder="Short description (optional)" rows={2} className="w-full px-3.5 py-2.5 rounded-lg text-sm text-white/85 outline-none resize-none" style={{ background: "rgba(17,24,39,0.7)", border: "1px solid rgba(45,140,255,0.15)", fontFamily: "'DM Sans', sans-serif" }} />
                 <div className="flex gap-2">
                   <select value={uploadShelf} onChange={e => setUploadShelf(e.target.value)} className="flex-1 px-3.5 py-2.5 rounded-lg text-sm text-white/85 outline-none" style={{ background: "rgba(17,24,39,0.7)", border: "1px solid rgba(45,140,255,0.15)", fontFamily: "'DM Sans', sans-serif" }}>
-                    {["Psychology", "Strategy", "Programming", "Business", "AI"].map(s => <option key={s} value={s} style={{ background: "#111827" }}>{s}</option>)}
+                    {["Psychology", "Strategy", "Programming", "Business", "AI",
+                        "Philosophy", "Science", "History", "Biography", "Self-Help",
+                        "Finance", "Health", "Politics", "Fiction", "Mathematics",
+                        "Economics", "Leadership", "Productivity", "Spirituality"].map(s => <option key={s} value={s} style={{ background: "#111827" }}>{s}</option>)}
                   </select>
                   <input value={uploadPages} onChange={e => setUploadPages(e.target.value)} placeholder="Pages" type="number" className="w-24 px-3.5 py-2.5 rounded-lg text-sm text-white/85 outline-none" style={{ background: "rgba(17,24,39,0.7)", border: "1px solid rgba(45,140,255,0.15)", fontFamily: "'DM Sans', sans-serif" }} />
                 </div>
