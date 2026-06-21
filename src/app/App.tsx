@@ -16,6 +16,7 @@ import { ProfileView } from "./views/ProfileView"
 import { AdminView } from "./views/AdminView"
 import { supabase } from "./supabaseClient"
 import type { User } from "@supabase/supabase-js"
+import { PublicLibraryView } from "./views/PublicLibraryView"
 
 export default function App() {
   const [view, setView] = useState<View>("home")
@@ -230,6 +231,7 @@ export default function App() {
                 {view === "flashcards" && <FlashcardsView />}
                 {view === "profile" && <ProfileView />}
                 {view === "admin" && role === "admin" && <AdminView />}
+                {view === "public" && <PublicLibraryView role={role} />}
               </motion.div>
             </AnimatePresence>
           </main>

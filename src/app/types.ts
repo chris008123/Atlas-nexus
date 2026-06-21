@@ -1,1 +1,1 @@
-export type View = "home" | "library" | "ai" | "graph" | "learning" | "flashcards" | "profile" | "admin"
+export type View = "home" | "library" | "ai" | "graph" | "learning" | "flashcards" | "profile" | "admin" | "public"
