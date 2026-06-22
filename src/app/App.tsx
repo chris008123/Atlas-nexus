@@ -110,7 +110,7 @@ export default function App() {
         {/* Sidebar */}
         <motion.aside
           className="fixed md:relative z-40 md:z-auto flex-shrink-0 flex flex-col h-full"
-          style={{ width: 220, background: "linear-gradient(180deg, #0A0F1F 0%, #050816 100%)", borderRight: "1px solid rgba(45,140,255,0.1)" }}
+          style={{ width: 220, background: "var(--sidebar-bg)", borderRight: "1px solid var(--border)" }}
           initial={false}
           animate={{ x: sidebarOpen || typeof window !== "undefined" && window.innerWidth >= 768 ? 0 : -220 }}
           transition={{ duration: 0.25, ease: "easeInOut" }}
@@ -121,12 +121,12 @@ export default function App() {
               <span className="text-white font-bold text-sm" style={{ fontFamily: "'Chakra Petch', sans-serif" }}>A-N</span>
             </div>
             <div>
-              <p className="text-white font-bold text-sm leading-none" style={{ fontFamily: "'Chakra Petch', sans-serif", letterSpacing: "0.05em" }}>ATLAS NEXUS</p>
-              <p className="text-[9px] text-white/30 mt-0.5 tracking-widest uppercase" style={{ fontFamily: "'JetBrains Mono', monospace" }}>Knowledge OS</p>
+              <p className="font-bold text-sm leading-none text-[var(--text)]" style={{ fontFamily: "'Chakra Petch', sans-serif", letterSpacing: "0.05em" }}>ATLAS NEXUS</p>
+              <p className="text-[9px] mt-0.5 tracking-widest uppercase text-[var(--text3)]" style={{ fontFamily: "'JetBrains Mono', monospace" }}>Knowledge OS</p>
             </div>
           </div>
 
-          <div className="mx-4 h-px mb-4" style={{ background: "rgba(45,140,255,0.08)" }} />
+          <div className="mx-4 h-px mb-4" style={{ background: "var(--header-border)" }} />
 
           {/* Nav */}
           <nav className="flex-1 px-3 space-y-0.5">
@@ -139,8 +139,8 @@ export default function App() {
                   className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-left transition-all duration-200"
                   style={{ background: active ? "rgba(45,140,255,0.12)" : "transparent", border: `1px solid ${active ? "rgba(45,140,255,0.25)" : "transparent"}` }}
                 >
-                  <Icon size={16} color={active ? "#2D8CFF" : "rgba(255,255,255,0.35)"} style={{ flexShrink: 0 }} />
-                  <span className="text-sm font-medium" style={{ color: active ? "#fff" : "rgba(255,255,255,0.45)", fontFamily: "'DM Sans', sans-serif" }}>
+                  <Icon size={16} color={active ? "#2D8CFF" : "var(--text3)"} style={{ flexShrink: 0 }} />
+                  <span className="text-sm font-medium" style={{ color: active ? "var(--text)" : "var(--text2)", fontFamily: "'DM Sans', sans-serif" }}>
                     {label}
                   </span>
                   {active && <div className="ml-auto w-1 h-1 rounded-full" style={{ background: "#2D8CFF" }} />}
@@ -151,17 +151,17 @@ export default function App() {
 
           {/* Bottom user */}
           <div className="p-4">
-            <div className="mx-0 h-px mb-4" style={{ background: "rgba(45,140,255,0.08)" }} />
+            <div className="mx-0 h-px mb-4" style={{ background: "var(--header-border)" }} />
             <div className="flex items-center gap-3 px-2 py-2 rounded-xl">
               <div className="w-7 h-7 rounded-full flex-shrink-0 flex items-center justify-center text-xs font-bold text-white"
                 style={{ background: "linear-gradient(135deg, #2D8CFF, #9B59B6)" }}>
                 {initials}
               </div>
               <div className="min-w-0 flex-1">
-                <p className="text-xs font-semibold text-white leading-none">{displayName}</p>
-                <p className="text-[10px] text-white/30 mt-0.5 truncate" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{user.email}</p>
+                <p className="text-xs font-semibold leading-none text-[var(--text)]">{displayName}</p>
+                <p className="text-[10px] mt-0.5 truncate text-[var(--text3)]" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{user.email}</p>
               </div>
-              <button onClick={handleSignOut} title="Sign out" className="text-white/25 hover:text-white/60 transition-colors">
+              <button onClick={handleSignOut} title="Sign out" className="text-[var(--text3)] hover:text-[var(--text)] transition-colors">
                 <LogOut size={13} />
               </button>
             </div>
@@ -171,27 +171,27 @@ export default function App() {
         {/* Main content */}
         <div className="flex-1 flex flex-col min-w-0 relative z-10">
           {/* Top bar */}
-          <header className="flex-shrink-0 flex items-center justify-between px-5 md:px-6 py-4" style={{ borderBottom: "1px solid rgba(45,140,255,0.08)" }}>
+          <header className="flex-shrink-0 flex items-center justify-between px-5 md:px-6 py-4" style={{ borderBottom: "1px solid var(--header-border)" }}>
             <div className="flex items-center gap-3">
               <button
                 className="md:hidden w-8 h-8 rounded-lg flex items-center justify-center"
-                style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.06)" }}
+                style={{ background: "var(--bg3)", border: "1px solid var(--border)" }}
                 onClick={() => setSidebarOpen(s => !s)}
               >
-                <Menu size={15} color="rgba(255,255,255,0.6)" />
+                <Menu size={15} color="var(--text2)" />
               </button>
               <div className="relative hidden sm:block">
-                <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/25" />
+                <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text3)]" />
                 <input
                   placeholder="Quick search…"
-                  className="pl-9 pr-4 py-2 rounded-xl text-xs text-white/70 outline-none w-56 transition-all focus:w-72"
-                  style={{ background: "rgba(17,24,39,0.6)", border: "1px solid rgba(45,140,255,0.1)", fontFamily: "'DM Sans', sans-serif" }}
+                  className="pl-9 pr-4 py-2 rounded-xl text-xs outline-none w-56 transition-all focus:w-72 text-[var(--text)] placeholder:text-[var(--text3)]"
+                  style={{ background: "var(--input-bg)", border: "1px solid var(--border)", fontFamily: "'DM Sans', sans-serif" }}
                 />
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <button className="w-8 h-8 rounded-lg flex items-center justify-center relative hover:bg-white/[0.04] transition-colors" style={{ border: "1px solid rgba(255,255,255,0.06)" }}>
-                <Bell size={14} color="rgba(255,255,255,0.45)" />
+              <button className="w-8 h-8 rounded-lg flex items-center justify-center relative hover:opacity-80 transition-opacity" style={{ border: "1px solid var(--border)" }}>
+                <Bell size={14} color="var(--text2)" />
                 <div className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full" style={{ background: "#2D8CFF" }} />
               </button>
               <button
