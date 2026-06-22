@@ -26,27 +26,28 @@ export function HomeView({ onNavigate, displayName }: { onNavigate: (v: View) =>
 
   return (
     <div className="space-y-8">
-      {/* Hero */}
+      {/* Hero — intentionally always dark navy, regardless of theme */}
       <div className="relative rounded-2xl overflow-hidden p-8" style={{
-        background: "linear-gradient(135deg, #0A1628 0%, #0D1F3C 50%, #0A0F1F 100%)",
-        border: "1px solid rgba(45,140,255,0.2)",
+        background: "var(--hero-bg)",
+        border: "1px solid var(--hero-border)",
+        boxShadow: "var(--hero-shadow)",
       }}>
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          <div className="absolute -top-20 -right-20 w-64 h-64 rounded-full blur-3xl" style={{ background: "rgba(45,140,255,0.08)" }} />
-          <div className="absolute bottom-0 left-1/3 w-48 h-48 rounded-full blur-3xl" style={{ background: "rgba(90,169,255,0.05)" }} />
+          <div className="absolute -top-20 -right-20 w-64 h-64 rounded-full blur-3xl" style={{ background: "var(--hero-glow-1)" }} />
+          <div className="absolute bottom-0 left-1/3 w-48 h-48 rounded-full blur-3xl" style={{ background: "var(--hero-glow-2)" }} />
           <div className="absolute inset-0 opacity-[0.03]" style={{ backgroundImage: "radial-gradient(circle at 1px 1px, rgba(45,140,255,1) 1px, transparent 0)", backgroundSize: "28px 28px" }} />
         </div>
         <div className="relative">
           <div className="flex items-center gap-2 mb-2">
             <div className="w-1.5 h-1.5 rounded-full animate-pulse" style={{ background: "#22C55E" }} />
-            <span className="text-xs text-white/40 font-medium tracking-widest uppercase" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+            <span className="text-xs font-medium tracking-widest uppercase" style={{ color: "var(--hero-text2)", fontFamily: "'JetBrains Mono', monospace" }}>
               Knowledge OS · Active
             </span>
           </div>
-          <h1 className="text-4xl font-bold text-white mb-1.5" style={{ fontFamily: "'Chakra Petch', sans-serif", letterSpacing: "-0.5px" }}>
+          <h1 className="text-4xl font-bold mb-1.5" style={{ color: "var(--hero-text)", fontFamily: "'Chakra Petch', sans-serif", letterSpacing: "-0.5px" }}>
             {greeting}, {displayName}.
           </h1>
-          <p className="text-white/50 text-base mb-6" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+          <p className="text-base mb-6" style={{ color: "var(--hero-text2)", fontFamily: "'DM Sans', sans-serif" }}>
             {books.length > 0
               ? `You have ${inProgress.length} book${inProgress.length !== 1 ? "s" : ""} in progress. Knowledge compounds every day.`
               : "Your library is ready. Start by adding your first book."}
@@ -72,7 +73,7 @@ export function HomeView({ onNavigate, displayName }: { onNavigate: (v: View) =>
 
       {/* Stats */}
       <div>
-        <h2 className="text-xs font-semibold text-white/40 tracking-widest uppercase mb-3" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+        <h2 className="text-xs font-semibold tracking-widest uppercase mb-3 text-[var(--text3)]" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
           Library Overview
         </h2>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
@@ -87,10 +88,10 @@ export function HomeView({ onNavigate, displayName }: { onNavigate: (v: View) =>
       {inProgress.length > 0 && (
         <div>
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-xs font-semibold text-white/40 tracking-widest uppercase" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+            <h2 className="text-xs font-semibold tracking-widest uppercase text-[var(--text3)]" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
               Continue Reading
             </h2>
-            <button onClick={() => onNavigate("library")} className="text-xs flex items-center gap-1 hover:text-white/80 transition-colors" style={{ color: "#2D8CFF" }}>
+            <button onClick={() => onNavigate("library")} className="text-xs flex items-center gap-1 hover:opacity-80 transition-opacity" style={{ color: "#2D8CFF" }}>
               View all <ChevronRight size={12} />
             </button>
           </div>
@@ -100,10 +101,10 @@ export function HomeView({ onNavigate, displayName }: { onNavigate: (v: View) =>
                 <div className="flex gap-3 mb-3">
                   <BookCover book={book} />
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-semibold text-white leading-tight line-clamp-2 mb-1" style={{ fontFamily: "'Chakra Petch', sans-serif" }}>
+                    <p className="text-sm font-semibold leading-tight line-clamp-2 mb-1 text-[var(--text)]" style={{ fontFamily: "'Chakra Petch', sans-serif" }}>
                       {book.title}
                     </p>
-                    <p className="text-xs text-white/40">{book.author}</p>
+                    <p className="text-xs text-[var(--text3)]">{book.author}</p>
                   </div>
                 </div>
                 <div className="space-y-1.5">
@@ -129,7 +130,7 @@ export function HomeView({ onNavigate, displayName }: { onNavigate: (v: View) =>
       {/* Recent Highlights & AI suggestions */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <div>
-          <h2 className="text-xs font-semibold text-white/40 tracking-widest uppercase mb-3" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+          <h2 className="text-xs font-semibold tracking-widest uppercase mb-3 text-[var(--text3)]" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
             Most Highlighted
           </h2>
           <div className="space-y-2">
@@ -138,21 +139,21 @@ export function HomeView({ onNavigate, displayName }: { onNavigate: (v: View) =>
                 <div className="flex gap-2.5 items-center">
                   <div className="w-0.5 self-stretch rounded-full flex-shrink-0" style={{ background: book.color, minHeight: "2rem" }} />
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-semibold text-white/85 leading-snug mb-1" style={{ fontFamily: "'Chakra Petch', sans-serif" }}>
+                    <p className="text-sm font-semibold leading-snug mb-1 text-[var(--text)]" style={{ fontFamily: "'Chakra Petch', sans-serif" }}>
                       {book.title}
                     </p>
                     <div className="flex items-center gap-2">
                       <span className="text-[10px] px-2 py-0.5 rounded-full" style={{ background: `${book.color}18`, color: book.color, fontFamily: "'JetBrains Mono', monospace" }}>
                         {book.highlights ?? 0} highlights
                       </span>
-                      <span className="text-[10px] text-white/30" style={{ fontFamily: "'DM Sans', sans-serif" }}>{book.author}</span>
+                      <span className="text-[10px] text-[var(--text3)]" style={{ fontFamily: "'DM Sans', sans-serif" }}>{book.author}</span>
                     </div>
                   </div>
                 </div>
               </GlassCard>
             )) : (
               <GlassCard className="p-3.5">
-                <p className="text-sm text-white/30 text-center py-2" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+                <p className="text-sm text-center py-2 text-[var(--text3)]" style={{ fontFamily: "'DM Sans', sans-serif" }}>
                   Add books to see your highlights here.
                 </p>
               </GlassCard>
@@ -161,7 +162,7 @@ export function HomeView({ onNavigate, displayName }: { onNavigate: (v: View) =>
         </div>
 
         <div>
-          <h2 className="text-xs font-semibold text-white/40 tracking-widest uppercase mb-3" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+          <h2 className="text-xs font-semibold tracking-widest uppercase mb-3 text-[var(--text3)]" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
             Nexus AI Suggestions
           </h2>
           <div className="space-y-2">
@@ -171,8 +172,8 @@ export function HomeView({ onNavigate, displayName }: { onNavigate: (v: View) =>
                   <div className="w-7 h-7 rounded-lg flex-shrink-0 flex items-center justify-center" style={{ background: "rgba(45,140,255,0.1)", border: "1px solid rgba(45,140,255,0.2)" }}>
                     <Sparkles size={13} color="#2D8CFF" />
                   </div>
-                  <p className="text-sm text-white/75 flex-1" style={{ fontFamily: "'DM Sans', sans-serif" }}>{s}</p>
-                  <ArrowRight size={13} className="text-white/20 flex-shrink-0" />
+                  <p className="text-sm flex-1 text-[var(--text2)]" style={{ fontFamily: "'DM Sans', sans-serif" }}>{s}</p>
+                  <ArrowRight size={13} className="flex-shrink-0 text-[var(--text3)]" />
                 </div>
               </GlassCard>
             ))}
