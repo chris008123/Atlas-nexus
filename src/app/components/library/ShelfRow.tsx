@@ -5,13 +5,13 @@ export function ShelfRow({ shelfName, books, onOpen }: { shelfName: string, book
   return (
     <div>
       <div className="flex items-center gap-2 mb-3">
-        <h3 className="text-sm font-bold text-white" style={{ fontFamily: "'Chakra Petch', sans-serif" }}>{shelfName}</h3>
-        <span className="text-[10px] text-white/30" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{books.length} books</span>
+        <h3 className="text-sm font-bold text-[var(--text)]" style={{ fontFamily: "'Chakra Petch', sans-serif" }}>{shelfName}</h3>
+        <span className="text-[10px] text-[var(--text3)]" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{books.length} books</span>
       </div>
       <div
         className="relative rounded-xl p-4 pb-6"
         style={{
-          background: "linear-gradient(180deg, rgba(17,24,39,0.45) 0%, rgba(17,24,39,0.12) 100%)",
+          background: "var(--shelf-bg)",
           border: "1px solid rgba(45,140,255,0.07)",
         }}
       >

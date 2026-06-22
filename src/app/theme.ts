@@ -27,6 +27,7 @@ export const LIGHT_THEME = `
     --dropdown-bg: rgba(255,255,255,0.98);
     --hover-bg: rgba(20,40,90,0.05);
     --card-scrim: rgba(248, 250, 255, 0.97);
+    --shelf-bg: linear-gradient(180deg, rgba(20,40,90,0.05) 0%, rgba(20,40,90,0.015) 100%);
   }
 `
 
@@ -59,5 +60,6 @@ export const DARK_THEME = `
     --dropdown-bg: rgba(10,15,31,0.97);
     --hover-bg: rgba(255,255,255,0.04);
     --card-scrim: rgba(5, 8, 22, 0.97);
+    --shelf-bg: linear-gradient(180deg, rgba(17,24,39,0.45) 0%, rgba(17,24,39,0.12) 100%);
   }
 `
