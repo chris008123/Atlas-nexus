@@ -9,8 +9,8 @@ export function AIInsightCard({ icon: Icon, label, value, color }: {
         <Icon size={14} color={color} />
       </div>
       <div className="min-w-0">
-        <p className="text-[9px] text-white/35 uppercase tracking-wide truncate" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{label}</p>
-        <p className="text-sm font-semibold text-white truncate" style={{ fontFamily: "'Chakra Petch', sans-serif" }}>{value}</p>
+        <p className="text-[9px] uppercase tracking-wide truncate text-[var(--text3)]" style={{ fontFamily: "'JetBrains Mono', monospace" }}>{label}</p>
+        <p className="text-sm font-semibold truncate text-[var(--text)]" style={{ fontFamily: "'Chakra Petch', sans-serif" }}>{value}</p>
       </div>
     </GlassCard>
   )
