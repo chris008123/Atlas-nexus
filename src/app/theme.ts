@@ -26,6 +26,7 @@ export const LIGHT_THEME = `
     --tile-border: rgba(20,40,90,0.09);
     --dropdown-bg: rgba(255,255,255,0.98);
     --hover-bg: rgba(20,40,90,0.05);
+    --card-scrim: rgba(248, 250, 255, 0.97);
   }
 `
 
@@ -57,5 +58,6 @@ export const DARK_THEME = `
     --tile-border: rgba(255,255,255,0.07);
     --dropdown-bg: rgba(10,15,31,0.97);
     --hover-bg: rgba(255,255,255,0.04);
+    --card-scrim: rgba(5, 8, 22, 0.97);
   }
 `

@@ -19,10 +19,10 @@ export function LibraryBookCard({ book, index, onOpen }: { book: Book, index: nu
         />
         <div className="relative">
           <BookCover book={book} size="lg" className="mx-auto mb-3" />
-          <p className="text-xs font-semibold text-white line-clamp-2 mb-0.5 leading-tight" style={{ fontFamily: "'Chakra Petch', sans-serif" }}>
+          <p className="text-xs font-semibold line-clamp-2 mb-0.5 leading-tight text-[var(--text)]" style={{ fontFamily: "'Chakra Petch', sans-serif" }}>
             {book.title}
           </p>
-          <p className="text-[10px] text-white/40 mb-2" style={{ fontFamily: "'DM Sans', sans-serif" }}>{book.author}</p>
+          <p className="text-[10px] mb-2 text-[var(--text3)]" style={{ fontFamily: "'DM Sans', sans-serif" }}>{book.author}</p>
           <ProgressBar value={book.progress} color={book.color} />
           <div className="flex justify-between mt-1.5 text-[9px]" style={{ color: book.color, fontFamily: "'JetBrains Mono', monospace" }}>
             <span>{book.progress}%</span>
@@ -33,16 +33,16 @@ export function LibraryBookCard({ book, index, onOpen }: { book: Book, index: nu
         {/* Hover reveal — shown without opening the modal */}
         <div
           className="absolute inset-x-0 bottom-0 p-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none"
-          style={{ background: "linear-gradient(180deg, transparent 0%, rgba(5,8,22,0.97) 38%)" }}
+          style={{ background: "linear-gradient(180deg, transparent 0%, var(--card-scrim) 38%)" }}
         >
-          <div className="grid grid-cols-2 gap-1 text-[9px] mb-1.5" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
-            <div className="flex items-center gap-1 text-white/60"><Highlighter size={9} color={book.color} />{book.highlights}</div>
-            <div className="flex items-center gap-1 text-white/60"><MessageSquare size={9} color={book.color} />{book.notes}</div>
+          <div className="grid grid-cols-2 gap-1 text-[9px] mb-1.5 text-[var(--text2)]" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+            <div className="flex items-center gap-1"><Highlighter size={9} color={book.color} />{book.highlights}</div>
+            <div className="flex items-center gap-1"><MessageSquare size={9} color={book.color} />{book.notes}</div>
           </div>
           <div className="flex items-center gap-1 text-[10px] font-semibold" style={{ color: book.color }}>
             <Play size={9} fill="currentColor" /> Continue Reading
           </div>
-          <div className="flex items-center gap-1 mt-1 text-[9px] text-white/40">
+          <div className="flex items-center gap-1 mt-1 text-[9px] text-[var(--text3)]">
             <Sparkles size={8} /> AI Summary available
           </div>
         </div>
