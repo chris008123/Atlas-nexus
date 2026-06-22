@@ -52,7 +52,7 @@ export function BookCover({ book, className = "", size = "md" }: { book: Book, c
 
 export function ProgressBar({ value, color }: { value: number, color: string }) {
   return (
-    <div className="w-full h-1 rounded-full overflow-hidden" style={{ background: "rgba(255,255,255,0.06)" }}>
+    <div className="w-full h-1 rounded-full overflow-hidden" style={{ background: "rgba(130,140,165,0.15)" }}>
       <motion.div
         initial={{ width: 0 }}
         animate={{ width: `${value}%` }}
@@ -71,8 +71,9 @@ export function GlassCard({ children, className = "", hover = true, onClick }: {
     <motion.div
       className={`rounded-xl ${className} ${onClick ? "cursor-pointer" : ""}`}
       style={{
-        background: "linear-gradient(135deg, rgba(17,24,39,0.8) 0%, rgba(10,15,31,0.6) 100%)",
-        border: "1px solid rgba(45,140,255,0.12)",
+        background: "var(--card-bg)",
+        border: "1px solid var(--border)",
+        boxShadow: "var(--card-shadow)",
         backdropFilter: "blur(12px)",
       }}
       whileHover={hover ? { borderColor: "rgba(45,140,255,0.3)", y: -2 } : undefined}
@@ -97,8 +98,8 @@ export function StatCard({ label, value, icon: Icon, color, subtitle }: {
           LIVE
         </span>
       </div>
-      <p className="text-2xl font-bold text-white mb-0.5" style={{ fontFamily: "'Chakra Petch', sans-serif" }}>{value}</p>
-      <p className="text-xs text-white/60 font-medium">{label}</p>
+      <p className="text-2xl font-bold mb-0.5 text-[var(--text)]" style={{ fontFamily: "'Chakra Petch', sans-serif" }}>{value}</p>
+      <p className="text-xs font-medium text-[var(--text2)]">{label}</p>
       {subtitle && <p className="text-[10px] mt-1" style={{ color, fontFamily: "'JetBrains Mono', monospace" }}>{subtitle}</p>}
     </GlassCard>
   )
