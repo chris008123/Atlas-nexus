@@ -13,13 +13,13 @@ export const LIGHT_THEME = `
     --input-bg: rgba(220,228,250,0.55);
     --header-border: rgba(30,80,180,0.09);
 
-    --hero-bg: linear-gradient(135deg, #142850 0%, #1B355E 50%, #0F1F3D 100%);
-    --hero-border: rgba(45,140,255,0.28);
-    --hero-text: #FFFFFF;
-    --hero-text2: rgba(255,255,255,0.55);
-    --hero-glow-1: rgba(45,140,255,0.14);
+    --hero-bg: linear-gradient(135deg, #E3ECFB 0%, #EEF3FC 50%, #F7F9FE 100%);
+    --hero-border: rgba(45,140,255,0.22);
+    --hero-text: #0D1525;
+    --hero-text2: rgba(13,21,37,0.55);
+    --hero-glow-1: rgba(45,140,255,0.10);
     --hero-glow-2: rgba(90,169,255,0.08);
-    --hero-shadow: 0 8px 30px rgba(20,50,110,0.18);
+    --hero-shadow: 0 8px 28px rgba(45,110,200,0.1);
   }
 `
 
