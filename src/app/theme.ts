@@ -20,6 +20,12 @@ export const LIGHT_THEME = `
     --hero-glow-1: rgba(45,140,255,0.10);
     --hero-glow-2: rgba(90,169,255,0.08);
     --hero-shadow: 0 8px 28px rgba(45,110,200,0.1);
+
+    --modal-bg: linear-gradient(135deg, #FFFFFF, #F3F6FD);
+    --tile-bg: rgba(20,40,90,0.035);
+    --tile-border: rgba(20,40,90,0.09);
+    --dropdown-bg: rgba(255,255,255,0.98);
+    --hover-bg: rgba(20,40,90,0.05);
   }
 `
 
@@ -45,5 +51,11 @@ export const DARK_THEME = `
     --hero-glow-1: rgba(45,140,255,0.08);
     --hero-glow-2: rgba(90,169,255,0.05);
     --hero-shadow: none;
+
+    --modal-bg: linear-gradient(135deg, #111827, #0A0F1F);
+    --tile-bg: rgba(255,255,255,0.03);
+    --tile-border: rgba(255,255,255,0.07);
+    --dropdown-bg: rgba(10,15,31,0.97);
+    --hover-bg: rgba(255,255,255,0.04);
   }
 `

@@ -164,8 +164,8 @@ export function LibraryView() {
       {/* Header */}
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-white" style={{ fontFamily: "'Chakra Petch', sans-serif" }}>Digital Library</h1>
-          <p className="text-sm text-white/40 mt-0.5" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+          <h1 className="text-2xl font-bold text-[var(--text)]" style={{ fontFamily: "'Chakra Petch', sans-serif" }}>Digital Library</h1>
+          <p className="text-sm mt-0.5 text-[var(--text3)]" style={{ fontFamily: "'DM Sans', sans-serif" }}>
             {totalBooks} books · {filtered.length} in this view
           </p>
         </div>
@@ -198,7 +198,7 @@ export function LibraryView() {
       <div>
         <div className="flex items-center gap-2 mb-3">
           <Sparkles size={13} color="#2D8CFF" />
-          <h2 className="text-xs font-semibold text-white/40 tracking-widest uppercase" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+          <h2 className="text-xs font-semibold tracking-widest uppercase text-[var(--text3)]" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
             Nexus AI Insights
           </h2>
         </div>
@@ -219,9 +219,10 @@ export function LibraryView() {
       <div className="relative">
         <div className="relative">
           <motion.div
-            animate={{ rotate: searchFocused ? -8 : 0, color: searchFocused ? "#5AA9FF" : "rgba(255,255,255,0.3)" }}
+            animate={{ rotate: searchFocused ? -8 : 0 }}
             transition={{ duration: 0.2 }}
-            className="absolute left-3.5 top-1/2 -translate-y-1/2 flex"
+            className="absolute left-3.5 top-1/2 -translate-y-1/2 flex transition-colors duration-200"
+            style={{ color: searchFocused ? "#5AA9FF" : "var(--text3)" }}
           >
             <Search size={15} />
           </motion.div>
@@ -231,15 +232,14 @@ export function LibraryView() {
             onFocus={() => setSearchFocused(true)}
             onBlur={() => setTimeout(() => setSearchFocused(false), 120)}
             onKeyDown={e => { if (e.key === "Enter") commitSearch(searchQuery) }}
-            className="w-full pl-10 pr-4 py-2.5 rounded-xl text-sm text-white/80 outline-none transition-colors"
+            className="w-full pl-10 pr-4 py-2.5 rounded-xl text-sm outline-none transition-colors text-[var(--text)] placeholder:text-[var(--text3)]"
             placeholder="Search books, authors, concepts, highlights…"
             animate={{
               boxShadow: searchFocused ? "0 0 0 3px rgba(45,140,255,0.15)" : "0 0 0 0px rgba(45,140,255,0)",
-              borderColor: searchFocused ? "rgba(45,140,255,0.45)" : "rgba(45,140,255,0.12)",
             }}
             style={{
-              background: "rgba(17,24,39,0.7)",
-              border: "1px solid rgba(45,140,255,0.12)",
+              background: "var(--input-bg)",
+              border: `1px solid ${searchFocused ? "rgba(45,140,255,0.45)" : "var(--border)"}`,
               fontFamily: "'DM Sans', sans-serif",
             }}
           />
@@ -253,35 +253,35 @@ export function LibraryView() {
               exit={{ opacity: 0, y: -6 }}
               transition={{ duration: 0.15 }}
               className="absolute left-0 right-0 mt-2 rounded-xl overflow-hidden z-20 p-1.5"
-              style={{ background: "rgba(10,15,31,0.97)", border: "1px solid rgba(45,140,255,0.18)", backdropFilter: "blur(12px)" }}
+              style={{ background: "var(--dropdown-bg)", border: "1px solid var(--border)", backdropFilter: "blur(12px)" }}
             >
               {query.length > 0 ? (
                 searchSuggestions.map(b => (
                   <button
                     key={b.id}
                     onMouseDown={() => { setSearchQuery(b.title); commitSearch(b.title) }}
-                    className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-left hover:bg-white/[0.04] transition-colors"
+                    className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-left hover:bg-[var(--hover-bg)] transition-colors"
                   >
                     <BookCover book={b} size="sm" />
                     <div className="min-w-0">
-                      <p className="text-xs font-medium text-white/85 truncate" style={{ fontFamily: "'DM Sans', sans-serif" }}>{b.title}</p>
-                      <p className="text-[10px] text-white/35 truncate">{b.author} · {b.shelf}</p>
+                      <p className="text-xs font-medium truncate text-[var(--text)]" style={{ fontFamily: "'DM Sans', sans-serif" }}>{b.title}</p>
+                      <p className="text-[10px] truncate text-[var(--text3)]">{b.author} · {b.shelf}</p>
                     </div>
                   </button>
                 ))
               ) : (
                 <>
-                  <p className="text-[10px] text-white/30 px-3 py-1.5 uppercase tracking-wide" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                  <p className="text-[10px] px-3 py-1.5 uppercase tracking-wide text-[var(--text3)]" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
                     Recent searches
                   </p>
                   {recentSearches.map((s, i) => (
                     <button
                       key={i}
                       onMouseDown={() => setSearchQuery(s)}
-                      className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-left hover:bg-white/[0.04] transition-colors"
+                      className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-left hover:bg-[var(--hover-bg)] transition-colors"
                     >
-                      <Clock size={12} className="text-white/25" />
-                      <span className="text-xs text-white/70" style={{ fontFamily: "'DM Sans', sans-serif" }}>{s}</span>
+                      <Clock size={12} className="text-[var(--text3)]" />
+                      <span className="text-xs text-[var(--text2)]" style={{ fontFamily: "'DM Sans', sans-serif" }}>{s}</span>
                     </button>
                   ))}
                 </>
@@ -304,8 +304,8 @@ export function LibraryView() {
               className="relative flex-shrink-0 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-colors"
               style={{
                 fontFamily: "'DM Sans', sans-serif",
-                color: active ? "#5AA9FF" : "rgba(255,255,255,0.45)",
-                border: `1px solid ${active ? "transparent" : "rgba(255,255,255,0.08)"}`,
+                color: active ? "#5AA9FF" : "var(--text2)",
+                border: `1px solid ${active ? "transparent" : "var(--border)"}`,
               }}
             >
               {active && (
@@ -357,16 +357,16 @@ export function LibraryView() {
               transition={{ duration: 0.25 }}
               className="w-full max-w-md rounded-2xl p-6 relative max-h-[90vh] overflow-y-auto"
               style={{
-                background: "linear-gradient(135deg, #111827, #0A0F1F)",
-                border: "1px solid rgba(45,140,255,0.2)",
+                background: "var(--modal-bg)",
+                border: "1px solid var(--border)",
                 boxShadow: `0 0 60px ${selectedBook.color}22`,
                 scrollbarWidth: "thin",
               }}
               onClick={(e) => e.stopPropagation()}
             >
               <button
-                className="absolute top-4 right-4 w-7 h-7 rounded-full flex items-center justify-center text-white/40 hover:text-white transition-colors"
-                style={{ background: "rgba(255,255,255,0.04)" }}
+                className="absolute top-4 right-4 w-7 h-7 rounded-full flex items-center justify-center transition-colors text-[var(--text3)] hover:text-[var(--text)]"
+                style={{ background: "var(--hover-bg)" }}
                 onClick={() => setSelectedBook(null)}
               >
                 <X size={14} />
@@ -380,10 +380,10 @@ export function LibraryView() {
                   <p className="text-xs mb-1 font-medium px-2 py-0.5 rounded-full inline-block" style={{ background: `${selectedBook.color}18`, color: selectedBook.color, fontFamily: "'JetBrains Mono', monospace" }}>
                     {selectedBook.shelf}
                   </p>
-                  <h3 className="text-lg font-bold text-white mt-1 leading-tight" style={{ fontFamily: "'Chakra Petch', sans-serif" }}>
+                  <h3 className="text-lg font-bold mt-1 leading-tight text-[var(--text)]" style={{ fontFamily: "'Chakra Petch', sans-serif" }}>
                     {selectedBook.title}
                   </h3>
-                  <p className="text-sm text-white/50 mb-2" style={{ fontFamily: "'DM Sans', sans-serif" }}>{selectedBook.author}</p>
+                  <p className="text-sm mb-2 text-[var(--text2)]" style={{ fontFamily: "'DM Sans', sans-serif" }}>{selectedBook.author}</p>
                   <ProgressBar value={selectedBook.progress} color={selectedBook.color} />
                   <div className="flex items-center justify-between mt-1.5">
                     <p className="text-xs" style={{ color: selectedBook.color, fontFamily: "'JetBrains Mono', monospace" }}>
@@ -404,10 +404,10 @@ export function LibraryView() {
                   { label: "Notes", value: selectedBook.notes, icon: MessageSquare, color: "#22C55E" },
                   { label: "Time Spent", value: selectedBook.timeSpent, icon: Clock, color: "#A855F7" },
                 ].map(({ label, value, icon: Icon, color }) => (
-                  <div key={label} className="rounded-lg p-2.5 text-center" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }}>
+                  <div key={label} className="rounded-lg p-2.5 text-center" style={{ background: "var(--tile-bg)", border: "1px solid var(--tile-border)" }}>
                     <Icon size={14} color={color} className="mx-auto mb-1" />
-                    <p className="text-sm font-bold text-white" style={{ fontFamily: "'Chakra Petch', sans-serif" }}>{value}</p>
-                    <p className="text-[10px] text-white/40">{label}</p>
+                    <p className="text-sm font-bold text-[var(--text)]" style={{ fontFamily: "'Chakra Petch', sans-serif" }}>{value}</p>
+                    <p className="text-[10px] text-[var(--text3)]">{label}</p>
                   </div>
                 ))}
               </div>
@@ -427,33 +427,33 @@ export function LibraryView() {
 
                 return (
                   <div className="mb-4">
-                    <p className="text-[10px] text-white/30 uppercase tracking-wide mb-2" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
+                    <p className="text-[10px] uppercase tracking-wide mb-2 text-[var(--text3)]" style={{ fontFamily: "'JetBrains Mono', monospace" }}>
                       Reading Insights
                     </p>
                     <div className="grid grid-cols-3 gap-2">
-                      <div className="rounded-lg p-2.5 text-center" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }}>
-                        <p className="text-xs font-bold text-white" style={{ fontFamily: "'Chakra Petch', sans-serif" }}>{completionLabel}</p>
-                        <p className="text-[9px] text-white/40 mt-0.5">Est. Completion</p>
+                      <div className="rounded-lg p-2.5 text-center" style={{ background: "var(--tile-bg)", border: "1px solid var(--tile-border)" }}>
+                        <p className="text-xs font-bold text-[var(--text)]" style={{ fontFamily: "'Chakra Petch', sans-serif" }}>{completionLabel}</p>
+                        <p className="text-[9px] mt-0.5 text-[var(--text3)]">Est. Completion</p>
                       </div>
-                      <div className="rounded-lg p-2.5 text-center" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }}>
-                        <p className="text-xs font-bold text-white" style={{ fontFamily: "'Chakra Petch', sans-serif" }}>{velocity > 0 ? `${velocity.toFixed(1)} pg/hr` : "—"}</p>
-                        <p className="text-[9px] text-white/40 mt-0.5">Reading Velocity</p>
+                      <div className="rounded-lg p-2.5 text-center" style={{ background: "var(--tile-bg)", border: "1px solid var(--tile-border)" }}>
+                        <p className="text-xs font-bold text-[var(--text)]" style={{ fontFamily: "'Chakra Petch', sans-serif" }}>{velocity > 0 ? `${velocity.toFixed(1)} pg/hr` : "—"}</p>
+                        <p className="text-[9px] mt-0.5 text-[var(--text3)]">Reading Velocity</p>
                       </div>
-                      <div className="rounded-lg p-2.5 text-center" style={{ background: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.06)" }}>
-                        <p className="text-xs font-bold text-white" style={{ fontFamily: "'Chakra Petch', sans-serif" }}>{knowledgeScore.toLocaleString()}</p>
-                        <p className="text-[9px] text-white/40 mt-0.5">Knowledge Score</p>
+                      <div className="rounded-lg p-2.5 text-center" style={{ background: "var(--tile-bg)", border: "1px solid var(--tile-border)" }}>
+                        <p className="text-xs font-bold text-[var(--text)]" style={{ fontFamily: "'Chakra Petch', sans-serif" }}>{knowledgeScore.toLocaleString()}</p>
+                        <p className="text-[9px] mt-0.5 text-[var(--text3)]">Knowledge Score</p>
                       </div>
                     </div>
                   </div>
                 )
               })()}
 
-              <div className="mb-5 rounded-lg p-3" style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)" }}>
+              <div className="mb-5 rounded-lg p-3" style={{ background: "var(--tile-bg)", border: "1px solid var(--tile-border)" }}>
                 <div className="flex items-center justify-between mb-1">
-                  <p className="text-[10px] text-white/30 uppercase tracking-wide" style={{ fontFamily: "'JetBrains Mono', monospace" }}>Notes</p>
+                  <p className="text-[10px] uppercase tracking-wide text-[var(--text3)]" style={{ fontFamily: "'JetBrains Mono', monospace" }}>Notes</p>
                   <span className="text-[10px]" style={{ color: selectedBook.color, fontFamily: "'JetBrains Mono', monospace" }}>{selectedBook.notes} saved</span>
                 </div>
-                <p className="text-xs text-white/40" style={{ fontFamily: "'DM Sans', sans-serif" }}>
+                <p className="text-xs text-[var(--text3)]" style={{ fontFamily: "'DM Sans', sans-serif" }}>
                   {selectedBook.notes > 0 ? "Open the reader to review your saved notes for this book." : "No notes yet — start annotating as you read."}
                 </p>
               </div>
