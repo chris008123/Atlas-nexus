@@ -13,7 +13,7 @@ export function ContinueReadingFeature({ book, onOpen }: { book: Book, onOpen: (
       whileHover={{ borderColor: `${book.color}55` }}
       className="relative rounded-2xl overflow-hidden p-5 sm:p-6 cursor-pointer"
       style={{
-        background: `linear-gradient(120deg, ${book.color}14 0%, rgba(17,24,39,0.88) 55%, rgba(10,15,31,0.92) 100%)`,
+        background: `linear-gradient(120deg, ${book.color}14 0%, var(--bg3) 55%, var(--bg2) 100%)`,
         border: `1px solid ${book.color}30`,
       }}
       onClick={() => onOpen(book)}
@@ -28,8 +28,8 @@ export function ContinueReadingFeature({ book, onOpen }: { book: Book, onOpen: (
               Continue Reading
             </span>
           </div>
-          <h3 className="text-lg font-bold text-white leading-tight mb-1 truncate" style={{ fontFamily: "'Chakra Petch', sans-serif" }}>{book.title}</h3>
-          <p className="text-xs text-white/40 mb-3 truncate" style={{ fontFamily: "'DM Sans', sans-serif" }}>{book.author} · Page {pagesRead} of {book.pages}</p>
+          <h3 className="text-lg font-bold leading-tight mb-1 truncate text-[var(--text)]" style={{ fontFamily: "'Chakra Petch', sans-serif" }}>{book.title}</h3>
+          <p className="text-xs mb-3 truncate text-[var(--text3)]" style={{ fontFamily: "'DM Sans', sans-serif" }}>{book.author} · Page {pagesRead} of {book.pages}</p>
           <ProgressBar value={book.progress} color={book.color} />
           <div className="flex items-center justify-between mt-2.5 flex-wrap gap-2">
             <span className="text-[11px]" style={{ color: book.color, fontFamily: "'JetBrains Mono', monospace" }}>{book.progress}% complete · {book.timeSpent}</span>
